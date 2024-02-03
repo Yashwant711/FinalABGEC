@@ -1,0 +1,110 @@
+plugins {
+    id 'com.android.application'
+    id 'com.google.gms.google-services'
+
+}
+apply plugin: 'kotlin-android'
+android {
+    namespace 'com.nikhil.finalabgec'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.nikhil.finalabgec"
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+
+
+    buildFeatures {
+        viewBinding = true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+}
+
+
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.firebase:firebase-auth:22.3.1'
+    implementation 'com.google.firebase:firebase-database:20.3.0'
+    implementation 'com.google.firebase:firebase-messaging:23.4.0'
+    implementation 'com.google.android.gms:play-services-auth:20.7.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'androidx.exifinterface:exifinterface:1.3.7'
+    implementation 'androidx.exifinterface:exifinterface:1.3.7'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+
+    //motion toast
+    implementation 'com.github.Spikeysanju:MotionToast:1.3.3.4'
+
+
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
+    //surround card view
+    implementation "com.furkanakdemir:surroundcardview:1.0.6"
+
+    //pin view
+    implementation 'io.github.chaosleung:pinview:1.4.4'
+
+    //lottie
+    implementation "com.airbnb.android:lottie:3.7.0"
+
+    implementation 'com.google.firebase:firebase-storage:20.3.0'
+    implementation 'com.google.firebase:firebase-auth:22.3.1'
+    //Smooth tab bar
+    implementation 'com.github.ibrahimsn98:SmoothBottomBar:1.7.9'
+
+    //Scalable size unit(support for different size screens)
+    implementation 'com.intuit.sdp:sdp-android:1.0.6'
+    implementation 'com.intuit.ssp:ssp-android:1.0.6'
+
+    //circle image view
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    implementation('com.facebook.fresco:fresco:2.6.0') {
+        exclude group: 'com.facebook.soloader', module: 'soloader'
+        exclude group: 'com.facebook.fresco', module: 'soloader'
+        exclude group: 'com.facebook.fresco', module: 'nativeimagefilters'
+        exclude group: 'com.facebook.fresco', module: 'nativeimagetranscoder'
+        exclude group: 'com.facebook.fresco', module: 'memory-type-native'
+        exclude group: 'com.facebook.fresco', module: 'imagepipeline-native'
+    }
+
+    // For WebP support, including animated WebP
+    implementation 'com.facebook.fresco:animated-webp:2.6.0'
+    implementation 'com.facebook.fresco:webpsupport:2.6.0'
+    implementation 'com.facebook.fresco:fresco:2.6.0'
+
+
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
+
+}

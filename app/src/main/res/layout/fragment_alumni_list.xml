@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/swipe_layout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Fragment.AlumniList">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/layoutSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_rect"
+            android:contentDescription="@string/image"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
+            android:padding="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_search"
+                app:tint="@color/main_blue" />
+
+            <EditText
+                android:id="@+id/input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@null"
+                android:fontFamily="@font/poppins_medium"
+                android:hint="@string/search_here"
+                android:imeOptions="actionDone"
+                android:importantForAutofill="no"
+                android:includeFontPadding="false"
+                android:inputType="text"
+                android:padding="3dp"
+                android:paddingStart="3dp"
+                android:textColor="@color/main_blue"
+                android:textColorHint="@color/grey"
+                android:textSize="17sp"
+                tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+        </LinearLayout>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/loadImage"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="cloud.json"
+            app:lottie_loop="true" />
+
+        <TextView
+            android:id="@+id/loadText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins"
+            android:gravity="center"
+            android:text="@string/explore_alumnis_profile"
+            android:layout_marginTop="-80dp"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@+id/loadImage"
+            app:layout_constraintStart_toStartOf="@+id/loadImage"
+            app:layout_constraintTop_toBottomOf="@+id/loadImage" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layoutSearch"
+            tools:listitem="@layout/card_layout_alumni" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

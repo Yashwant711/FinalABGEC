@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:id="@+id/change_layout"
+    tools:context=".MainActivity">
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:context=".Fragments.MainActivity"
+        tools:openDrawer="start">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="35dp"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:minHeight="?attr/actionBarSize">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/globe"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginEnd="25dp"
+                        android:contentDescription="@string/image"
+                        android:src="@drawable/ic_website"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+            </androidx.appcompat.widget.Toolbar>
+
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="50dp"
+                app:layout_constraintBottom_toTopOf="@+id/bottomBar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout">
+
+            </FrameLayout>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/veryLightGrey"
+            app:headerLayout="@layout/nav_header_layout"
+            app:itemBackground="@drawable/item_background_nav_check"
+            app:itemIconPadding="30dp"
+            app:itemIconSize="25dp"
+            app:itemIconTint="@color/main_blue"
+            app:itemTextColor="@color/black"
+            app:itemVerticalPadding="15dp"
+            app:menu="@menu/navigation_menu" />
+
+
+    </androidx.drawerlayout.widget.DrawerLayout>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_f"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:tint="@android:color/white"
+        android:backgroundTint="@color/main_yellow"
+        app:layout_constraintBottom_toTopOf="@+id/bottomBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_add"
+        tools:ignore="VectorDrawableCompat"
+        android:contentDescription="TODO" />
+
+    <!--This act a child Floating Action Button-->
+    <!-- The visibility is been set to INVISIBLE -->
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/job"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:visibility="gone"
+        android:focusable="true"
+        android:backgroundTint="@color/main_yellow"
+        android:tint="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/textView19"
+        app:layout_constraintEnd_toEndOf="@+id/add_f"
+        app:srcCompat="@drawable/ic_job" />
+
+
+    <TextView
+        android:id="@+id/textView19"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_medium"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:text="@string/add_job"
+        android:visibility="gone"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@id/job"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/job"
+        app:layout_constraintBottom_toTopOf="@id/add_f"/>
+
+    <!--This act a child Floating Action Button-->
+    <!-- The visibility is been set to INVISIBLE -->
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/main_yellow"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        android:tint="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/textView20"
+        app:layout_constraintEnd_toEndOf="@+id/job"
+        app:srcCompat="@drawable/ic_share"
+        android:contentDescription="TODO" />
+
+
+    <TextView
+        android:id="@+id/textView20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_medium"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="@color/black"
+        android:text="@string/add_post"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@id/post"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/post"
+        app:layout_constraintBottom_toTopOf="@id/job" />
+
+
+    <me.ibrahimsn.lib.SmoothBottomBar
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        app:activeItem="0"
+        app:backgroundColor="@color/main_blue"
+        app:iconSize="20dp"
+        app:iconTint="@color/white"
+        app:iconTintActive="@color/white"
+        app:itemFontFamily="@font/poppins"
+        app:itemPadding="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/list"
+        app:sideMargins="5dp"
+        android:contentDescription="@string/bottom_bar"
+        app:textColor="@color/white"
+        app:textSize="12sp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

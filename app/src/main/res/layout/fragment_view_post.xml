@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    xmlns:fresco="http://schemas.android.com/tools"
+    android:focusable="true"
+    android:id="@+id/view_post_layout"
+    android:background="@color/white"
+    android:clickable="true"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/scrollView3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="50dp">
+
+            <!--<com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/imageNote"
+                android:layout_width="match_parent"
+                android:layout_height="350dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_colorfull"
+                android:visibility="visible"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:riv_corner_radius_bottom_left="20dp"
+                app:riv_corner_radius_bottom_right="20dp" />-->
+
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/imageNote"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerInside"
+
+                app:failureImage="@drawable/ic_job"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:roundedCornerRadius="20dp"
+                fresco:placeholderImage="@drawable/my_drawable" />
+
+            <LinearLayout
+                android:id="@+id/like_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingStart="20dp"
+                android:paddingTop="10dp"
+                android:visibility="gone"
+                android:paddingEnd="20dp"
+                android:paddingBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageNote"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:id="@+id/heart"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_heart_liked"
+                    app:layout_constraintEnd_toEndOf="@+id/title"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageNote" />
+
+                <TextView
+                    android:id="@+id/like_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/poppins"
+                    android:maxLines="1"
+                    android:textColor="@color/blue"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/bg_back_view"
+                android:fontFamily="@font/poppins"
+                android:gravity="center"
+                android:padding="8dp"
+                android:drawablePadding="3dp"
+                android:visibility="gone"
+                android:text="@string/delete"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView4"
+                app:layout_constraintEnd_toStartOf="@+id/share"
+                app:layout_constraintTop_toTopOf="@+id/imageView4"
+                app:drawableStartCompat="@drawable/ic_delete" />
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/bg_back_view"
+                android:contentDescription="@string/image"
+                android:padding="10dp"
+                android:src="@drawable/ic_back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <ImageView
+                android:id="@+id/share"
+                android:layout_width="33dp"
+                android:layout_height="33dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/bg_back_view"
+                android:contentDescription="@string/image"
+                android:padding="10dp"
+                android:src="@drawable/ic_share"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView4"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/imageView4" />
+
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:autoLink="web"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppins"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:textColorLink="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageNote" />
+
+            <TextView
+                android:id="@+id/textView16"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/poppins"
+                android:text="By - "
+                android:textColor="@color/orange_700"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/link" />
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="20dp"
+                android:fontFamily="@font/poppins"
+                android:textColor="@color/grey_600"
+                android:textSize="16sp"
+                android:textStyle="bold"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textView16"
+                app:layout_constraintTop_toTopOf="@+id/textView16" />
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:fontFamily="@font/poppins"
+                android:textColor="@color/grey_600"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title" />
+
+            <TextView
+                android:id="@+id/link"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:fontFamily="@font/poppins"
+                android:textColor="@color/grey_600"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/description" />
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="20dp"
+                android:drawablePadding="10dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/ic_date"
+                android:fontFamily="@font/poppins"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView16" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

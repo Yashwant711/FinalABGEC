@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "853407997675",
+    "project_id": "final-abgec",
+    "storage_bucket": "final-abgec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:853407997675:android:d88c1dab9fcb5fabef68ae",
+        "android_client_info": {
+          "package_name": "com.nikhil.finalabgec"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHuNRuVoprUS1K7tcwqTfOhPCi_7-75f8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

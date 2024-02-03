@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:id="@+id/layout"
+    android:gravity="center"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:background="@drawable/bg_card"
+    xmlns:fresco="http://schemas.android.com/tools"
+    android:backgroundTint="@color/white"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="1">
+
+
+        <RelativeLayout
+            android:id="@+id/img_slider"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/profile_img"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                app:failureImage="@drawable/ic_abgec_loading"
+                app:roundedCornerRadius="50dp"
+                fresco:placeholderImage="@drawable/ic_image_holder" />
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/topic"
+            android:layout_width="0dp"
+            android:paddingStart="8dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins"
+            android:maxLines="1"
+            android:textAllCaps="true"
+            android:textColor="@color/grey_900"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/delete"
+            app:layout_constraintStart_toEndOf="@+id/img_slider"
+            app:layout_constraintTop_toTopOf="@+id/img_slider"
+            tools:text="@tools:sample/full_names" />
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins"
+            android:maxLines="1"
+            android:paddingStart="8dp"
+            android:textColor="@color/main_yellow"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/img_slider"
+            app:layout_constraintEnd_toEndOf="@+id/topic"
+            app:layout_constraintStart_toStartOf="@+id/topic"
+            app:layout_constraintTop_toBottomOf="@+id/topic"
+            tools:text="3rd sem CSE" />
+
+
+        <RelativeLayout
+            android:id="@+id/img_slider2"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/name">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/post_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                app:failureImage="@drawable/abgec_"
+                app:roundedCornerRadius="10dp"
+                android:scaleType="centerCrop"
+                app:failureImageScaleType="center"
+                fresco:placeholderImage="@drawable/ic_image_holder" />
+
+        </RelativeLayout>
+
+
+        <ImageView
+            android:id="@+id/heart"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ic_heart"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="@+id/img_slider2"
+            app:layout_constraintTop_toBottomOf="@+id/img_slider2" />
+
+
+        <TextView
+            android:id="@+id/like_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:ellipsize="end"
+            android:textSize="16sp"
+            android:fontFamily="@font/poppins"
+            android:maxLines="1"
+            android:textColor="@color/blue"
+            app:layout_constraintBottom_toBottomOf="@+id/heart"
+            app:layout_constraintStart_toEndOf="@+id/heart"
+            app:layout_constraintTop_toTopOf="@+id/heart"
+            tools:text="3rd sem CSE" />
+
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins"
+            android:maxLines="2"
+            android:paddingBottom="8dp"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/img_slider2"
+            app:layout_constraintStart_toStartOf="@+id/heart"
+            app:layout_constraintTop_toBottomOf="@+id/heart"
+            tools:text="3rd sem CSE" />
+
+        <ImageView
+            android:id="@+id/delete"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="15dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ic_share"
+            app:layout_constraintBottom_toTopOf="@+id/img_slider2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#90e0ef" />
+
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/like_btn"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="like.json"
+            android:visibility="gone"
+            app:lottie_loop="true" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>
