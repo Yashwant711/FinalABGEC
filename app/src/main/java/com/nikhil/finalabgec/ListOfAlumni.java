@@ -137,4 +137,5 @@ public class ListOfAlumni extends AppCompatActivity {
         if (recyclerView != null)
             recyclerView.setAdapter(userAdapter);
     }
+
 }

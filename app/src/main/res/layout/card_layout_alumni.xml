@@ -36,7 +36,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 app:roundedCornerRadius="50dp"
-                fresco:placeholderImage="@drawable/ic_image_holder" />
+                fresco:placeholderImage="@drawable/ic_acc_profile" />
 
         </RelativeLayout>
 
@@ -68,7 +68,7 @@
             app:layout_constraintEnd_toStartOf="@+id/delete"
             app:layout_constraintStart_toStartOf="@+id/textView5"
             app:layout_constraintTop_toBottomOf="@+id/textView5"
-            tools:text="3rd sem CSE" />
+            tools:text="Branch" />
 
         <TextView
             android:id="@+id/textView7"
@@ -80,7 +80,7 @@
             android:layout_marginBottom="5dp"
             android:fontFamily="@font/poppins"
             app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="Passout Year"
+            tools:text="Batch"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/textView6"
             app:layout_constraintTop_toBottomOf="@+id/textView6" />

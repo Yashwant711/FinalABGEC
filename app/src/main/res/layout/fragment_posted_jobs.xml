@@ -99,6 +99,7 @@
         </LinearLayout>
 
         <com.airbnb.lottie.LottieAnimationView
+            android:visibility="gone"
             android:id="@+id/loadImage"
             android:layout_width="300dp"
             android:layout_height="300dp"
@@ -111,6 +112,7 @@
             app:lottie_loop="true" />
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/loadText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

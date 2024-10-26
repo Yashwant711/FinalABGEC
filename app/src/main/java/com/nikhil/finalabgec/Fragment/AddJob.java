@@ -281,8 +281,11 @@ public class AddJob extends Fragment implements AdapterView.OnItemSelectedListen
     }
 
     private void back() {
-        assert getFragmentManager() != null;
-        getFragmentManager().beginTransaction().remove(AddJob.this).commit();
+//        assert getFragmentManager() != null;
+//        getFragmentManager().beginTransaction().remove(AddJob.this).commit();
+        assert getActivity() != null;
+        getActivity().getSupportFragmentManager().beginTransaction().remove(AddJob.this).commit();
+
     }
 
     private void dataPush() {
@@ -325,7 +328,7 @@ public class AddJob extends Fragment implements AdapterView.OnItemSelectedListen
                                             level_str = experience_level.getSelectedItem().toString();
                                             mode_str = job_mode.getSelectedItem().toString();
 
-                                            //uploadImage();
+                                            // uploadImage();
                                             reference.child(pushkey).child("jobType").setValue(str_type);
                                             reference.child(pushkey).child("imageLink").setValue(image_link);
                                             reference.child(pushkey).child("jobFunction").setValue(func_str);
@@ -333,11 +336,11 @@ public class AddJob extends Fragment implements AdapterView.OnItemSelectedListen
                                             reference.child(pushkey).child("jobMode").setValue(mode_str);
                                             reference.child(pushkey).child("company").setValue(company.getText().toString());
                                             reference.child(pushkey).child("jobTitle").setValue(job_title.getText().toString());
-                                            //reference.child(pushkey).child("jobId").setValue(job_id.getText().toString());
+                                            // reference.child(pushkey).child("jobId").setValue(job_id.getText().toString());
                                             reference.child(pushkey).child("joblocation").setValue(job_location.getText().toString());
                                             reference.child(pushkey).child("salary").setValue(salary.getText().toString());
                                             reference.child(pushkey).child("uid").setValue(user.getUid());
-                                            reference.child(pushkey).child("number").setValue(user.getPhoneNumber());
+                                            // reference.child(pushkey).child("number").setValue(user.getPhoneNumber());
                                             reference.child(pushkey).child("url").setValue(link.getText().toString());
                                             reference.child(pushkey).child("pushkey").setValue(pushkey);
 

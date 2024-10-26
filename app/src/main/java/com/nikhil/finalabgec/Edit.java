@@ -25,6 +25,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -38,6 +39,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -64,6 +67,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.nikhil.finalabgec.Fragment.Profile;
+import com.nikhil.finalabgec.Model.UserDataModel;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -75,52 +79,41 @@ import java.util.Calendar;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Edit extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class Edit extends AppCompatActivity {
 
-    private ImageView imageView;
-
-    private final int PICK_IMAGE_REQUEST = 22;
     String selectedImagePath="";
     public ActivityResultLauncher<Intent> resultLauncher;
-    private String shopImageUri;
     private Uri imageUri;
-    private SimpleDraweeView shopImage;
+
     Dialog dialog;
-    TextView personal_btn, date_txt, social_btn, occupation_btn, male, female, submit;
-    LinearLayout layout_personal, layout_social, layout_occupation;
-    Context contextNullSafe;
-    ImageView back_btn;
-    int x = 0;
-    int y = 0;
-    LinearLayout upload_pic;
-    ConstraintLayout lay;
-    int z = 0;
-    int check_;
-    ArrayAdapter ad;
     DatePickerDialog.OnDateSetListener mDateSetListener;
-    private static final int CAMERA_REQUEST = 1888;
-    public final int PERMISSION_REQUEST_CODE = 1001;
+
+    public static final int REQUEST_CODE_STORAGE_PERMISSION = 1;
+
     // instance for firebase storage and StorageReference
     FirebaseStorage storage;
     StorageReference storageReference;
     DatabaseReference reference;
     FirebaseAuth auth;
     FirebaseUser user;
-    String gender = "";
 
-    EditText bio, fb, twitter, linkidin, insta, organiztion, designation, year, name, state, country, city;
-    AutoCompleteTextView branch, passout_yr;
-    TextView gend;
+    String gender, uName, uBranch, uBatch, uDob, uCountry, uState, uCity;
+    String uBio, uDesignation, uOrganization, uPhone, uEmail;
+    String uFacebook, uInstagram, uLinkedin, uTwitter;
+    boolean isContactVisible;
 
 
-    String[] values = {"Service", "Self-Employed", "Retired", "Other"};
-    Spinner spino;
+    ImageView backButton;
+    ConstraintLayout upload_pic;
+    SimpleDraweeView shopImage;
+    TextView male, female;
+    EditText name, branch, batch, dob, country, state, city;
+    EditText bio, designation, organization, phone, email;
+    EditText facebook, instagram, linkedin, twitter;
+    Button saveButton, removeProfilePic;
+    CheckBox contactVisibility;
+    UserDataModel userDataModel;
 
-    String gen, dateOfBirth, bioo, fcb, twt, lin, inst, occup, organ, desig, nam, br, py, countr, stat, cit, dp_uri;
-
-    public static final int REQUEST_CODE_STORAGE_PERMISSION = 1;
-
-    private static final int pic_id = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,177 +124,104 @@ public class Edit extends AppCompatActivity implements AdapterView.OnItemSelecte
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(Edit.this, R.color.white));
 
-        spino = findViewById(R.id.spinner);
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
-        upload_pic = findViewById(R.id.profile_pic);
-        gend = findViewById(R.id.gender);
+        backButton = findViewById(R.id.backButton);
+        upload_pic = findViewById(R.id.upload_picture);
         shopImage = findViewById(R.id.image);
-        layout_personal = findViewById(R.id.personal_layout);
-        personal_btn = findViewById(R.id.personal_btn);
-        date_txt = findViewById(R.id.date);
-        social_btn = findViewById(R.id.social);
-        layout_social = findViewById(R.id.social_links);
-        layout_occupation = findViewById(R.id.occupation_layout);
+        name = findViewById(R.id.editName);
         male = findViewById(R.id.male);
         female = findViewById(R.id.female);
-        occupation_btn = findViewById(R.id.occupation);
-        back_btn = findViewById(R.id.back);
-        //year = findViewById(R.id.)
-        reference = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
-        //occupation = findViewById(R.id.occupation_edt);
-        lay = findViewById(R.id.lay1);
-        //Editext
-        submit = findViewById(R.id.submit);
-        name = findViewById(R.id.name);
-        state = findViewById(R.id.state);
-        city = findViewById(R.id.city);
-        country = findViewById(R.id.country);
-        //mobile_no = view.findViewById(R.id.mobile_no);
-        branch = findViewById(R.id.country_p);
-        passout_yr = findViewById(R.id.passout_yr);
-        organiztion = findViewById(R.id.company);
-        designation = findViewById(R.id.designation);
-        insta = findViewById(R.id.instagram);
-        linkidin = findViewById(R.id.linkedin);
-        fb = findViewById(R.id.facebook);
-        twitter = findViewById(R.id.twitter);
-        bio = findViewById(R.id.bio);
+        branch = findViewById(R.id.editBranch);
+        batch = findViewById(R.id.editBatch);
+        dob = findViewById(R.id.editDob);
+        country = findViewById(R.id.editCountry);
+        state = findViewById(R.id.editState);
+        city = findViewById(R.id.editCity);
+        bio = findViewById(R.id.editBio);
+        designation = findViewById(R.id.editDesignation);
+        organization = findViewById(R.id.editOrganization);
+        phone = findViewById(R.id.editPhone);
+        email = findViewById(R.id.editEmail);
+        facebook = findViewById(R.id.editFacebook);
+        instagram = findViewById(R.id.editInstagram);
+        linkedin = findViewById(R.id.editLinkedin);
+        twitter = findViewById(R.id.editTwitter);
+        saveButton = findViewById(R.id.btnSave);
+        contactVisibility = findViewById(R.id.checkboxContactVisibility);
+        removeProfilePic = findViewById(R.id.remove_profile_pic_button);
+
+//        spino = findViewById(R.id.spinner);
+//        upload_pic = findViewById(R.id.profile_pic);
+//        gend = findViewById(R.id.gender);
+//        shopImage = findViewById(R.id.image);
+//        layout_personal = findViewById(R.id.personal_layout);
+//        personal_btn = findViewById(R.id.personal_btn);
+//        date_txt = findViewById(R.id.date);
+//        social_btn = findViewById(R.id.social);
+//        layout_social = findViewById(R.id.social_links);
+//        layout_occupation = findViewById(R.id.occupation_layout);
+//        male = findViewById(R.id.male);
+//        female = findViewById(R.id.female);
+//        occupation_btn = findViewById(R.id.occupation);
+//        back_btn = findViewById(R.id.back);
+//        //year = findViewById(R.id.)
+//        reference = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
+//        //occupation = findViewById(R.id.occupation_edt);
+//        lay = findViewById(R.id.lay1);
+//        //Editext
+//        submit = findViewById(R.id.submit);
+//        name = findViewById(R.id.name);
+//        state = findViewById(R.id.state);
+//        city = findViewById(R.id.city);
+//        country = findViewById(R.id.country);
+//        //mobile_no = view.findViewById(R.id.mobile_no);
+//        branch = findViewById(R.id.country_p);
+//        passout_yr = findViewById(R.id.passout_yr);
+//        organiztion = findViewById(R.id.company);
+//        designation = findViewById(R.id.designation);
+//        insta = findViewById(R.id.instagram);
+//        linkidin = findViewById(R.id.linkedin);
+//        fb = findViewById(R.id.facebook);
+//        twitter = findViewById(R.id.twitter);
+//        bio = findViewById(R.id.bio);
+
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
-        //spinner
-        spino.setOnItemSelectedListener(this);
-        ad = new ArrayAdapter(
-                this,
-                android.R.layout.simple_spinner_item,
-                values);
-        ad.setDropDownViewResource(
-                android.R.layout
-                        .simple_spinner_dropdown_item);
-        spino.setAdapter(ad);
+//        //spinner
+//        spino.setOnItemSelectedListener(this);
+//        ad = new ArrayAdapter(
+//                this,
+//                android.R.layout.simple_spinner_item,
+//                values);
+//        ad.setDropDownViewResource(
+//                android.R.layout
+//                        .simple_spinner_dropdown_item);
+//        spino.setAdapter(ad);
 
         //ValueGetting();
+
         valueGetting();
 
-        Fresco.initialize(
-                Edit.this,
-                ImagePipelineConfig.newBuilder(Edit.this)
-                        .setMemoryChunkType(MemoryChunkType.BUFFER_MEMORY)
-                        .setImageTranscoderType(ImageTranscoderType.JAVA_TRANSCODER)
-                        .experiment().setNativeCodeDisabled(true)
-                        .build());
-
-        submit.setOnClickListener(v -> {
-
-            if (!name.getText().toString().trim().equals("")) {
-                if (!branch.getText().toString().trim().equals("")) {
-                    if (!passout_yr.getText().toString().trim().equals("")) {
-                        if (!country.getText().toString().trim().equals("")) {
-                            if (!state.getText().toString().trim().equals("")) {
-                                if (!city.getText().toString().trim().equals("")) {
-                                    if (!gender.equals("")) {
-                                        //if (!date_txt.getText().toString().trim().equals("")) {
-                                            uploadImage();
-//                                        } else {
-//                                            date_txt.setError("Empty");
-//                                            layout_personal.setVisibility(View.VISIBLE);
-//                                            Snackbar.make(lay, "Please Add Your Date of Birth", Snackbar.LENGTH_LONG)
-//                                                    .setActionTextColor(Color.parseColor("#171746"))
-//                                                    .setTextColor(Color.parseColor("#FF7F5C"))
-//                                                    .setBackgroundTint(Color.parseColor("#171746"))
-//                                                    .show();
-//                                        }
-                                    } else {
-                                        gend.setError("Empty");
-                                        layout_personal.setVisibility(View.VISIBLE);
-                                        Snackbar.make(lay, "Please Select Your Gender", Snackbar.LENGTH_LONG)
-                                                .setActionTextColor(Color.parseColor("#171746"))
-                                                .setTextColor(Color.parseColor("#FF7F5C"))
-                                                .setBackgroundTint(Color.parseColor("#171746"))
-                                                .show();
-                                    }
-                                } else {
-                                    city.setError("Empty");
-                                    Snackbar.make(lay, "Please Add City", Snackbar.LENGTH_LONG)
-                                            .setActionTextColor(Color.parseColor("#171746"))
-                                            .setTextColor(Color.parseColor("#FF7F5C"))
-                                            .setBackgroundTint(Color.parseColor("#171746"))
-                                            .show();
-                                }
-                            } else {
-                                state.setError("Empty");
-                                Snackbar.make(lay, "Please Add State", Snackbar.LENGTH_LONG)
-                                        .setActionTextColor(Color.parseColor("#171746"))
-                                        .setTextColor(Color.parseColor("#FF7F5C"))
-                                        .setBackgroundTint(Color.parseColor("#171746"))
-                                        .show();
-                            }
-                        } else {
-                            country.setError("Empty");
-                            Snackbar.make(lay, "Please Add Country", Snackbar.LENGTH_LONG)
-                                    .setActionTextColor(Color.parseColor("#171746"))
-                                    .setTextColor(Color.parseColor("#FF7F5C"))
-                                    .setBackgroundTint(Color.parseColor("#171746"))
-                                    .show();
-                        }
-                    } else {
-                        passout_yr.setError("Empty");
-                        Snackbar.make(lay, "Please Add Passout Year", Snackbar.LENGTH_LONG)
-                                .setActionTextColor(Color.parseColor("#171746"))
-                                .setTextColor(Color.parseColor("#FF7F5C"))
-                                .setBackgroundTint(Color.parseColor("#171746"))
-                                .show();
-                    }
-                } else {
-                    branch.setError("Empty");
-                    Snackbar.make(lay, "Please Add Branch.", Snackbar.LENGTH_LONG)
-                            .setActionTextColor(Color.parseColor("#171746"))
-                            .setTextColor(Color.parseColor("#FF7F5C"))
-                            .setBackgroundTint(Color.parseColor("#171746"))
-                            .show();
-                }
-            } else {
-                name.setError("Empty");
-                Snackbar.make(lay, "Please Add Name.", Snackbar.LENGTH_LONG)
-                        .setActionTextColor(Color.parseColor("#171746"))
-                        .setTextColor(Color.parseColor("#FF7F5C"))
-                        .setBackgroundTint(Color.parseColor("#171746"))
-                        .show();
-            }
+        male.setOnClickListener(v -> {
+            male.setBackgroundResource(R.drawable.bg_selector);
+            female.setBackgroundResource(R.drawable.bg_male);
+            gender = "Male";
         });
 
-
-        occupation_btn.setOnClickListener(v -> {
-            if (z == 0) {
-                z = 1;
-                layout_occupation.setVisibility(View.VISIBLE);
-                Animation animSlideDown = AnimationUtils.loadAnimation(Edit.this, R.anim.slide_down);
-                layout_occupation.startAnimation(animSlideDown);
-            } else {
-                z = 0;
-                Animation animSlideUp = AnimationUtils.loadAnimation(Edit.this, R.anim.slide_up);
-                layout_occupation.startAnimation(animSlideUp);
-                layout_occupation.setVisibility(View.GONE);
-            }
+        female.setOnClickListener(v -> {
+            female.setBackgroundResource(R.drawable.bg_selector);
+            male.setBackgroundResource(R.drawable.bg_male);
+            gender = "Female";
         });
 
-        social_btn.setOnClickListener(v -> {
-            if (y == 0) {
-                y = 1;
-                layout_social.setVisibility(View.VISIBLE);
-                Animation animSlideDown = AnimationUtils.loadAnimation(Edit.this, R.anim.slide_down);
-                layout_social.startAnimation(animSlideDown);
-            } else {
-                y = 0;
-                Animation animSlideUp = AnimationUtils.loadAnimation(Edit.this, R.anim.slide_up);
-                layout_social.startAnimation(animSlideUp);
-                layout_social.setVisibility(View.GONE);
-            }
+        saveButton.setOnClickListener(v -> {
+            uploadImage();
         });
 
-        date_txt.setOnClickListener(v -> {
+        dob.setOnClickListener(v -> {
             Calendar cal = Calendar.getInstance();
             int year = cal.get(Calendar.YEAR);
             int month = cal.get(Calendar.MONTH);
@@ -311,102 +231,120 @@ public class Edit extends AppCompatActivity implements AdapterView.OnItemSelecte
                     Edit.this,
                     mDateSetListener,
                     year, month, day);
-            check_ = 0;
+            dialog.getDatePicker().setMaxDate(cal.getTimeInMillis());
             dialog.show();
         });
 
-
-        personal_btn.setOnClickListener(v -> {
-            if (x == 0) {
-                x = 1;
-                layout_personal.setVisibility(View.VISIBLE);
-                Animation animSlideDown = AnimationUtils.loadAnimation(Edit.this, R.anim.slide_down);
-                layout_personal.startAnimation(animSlideDown);
-            } else {
-                x = 0;
-                Animation animSlideUp = AnimationUtils.loadAnimation(Edit.this, R.anim.slide_up);
-                layout_personal.startAnimation(animSlideUp);
-                layout_personal.setVisibility(View.GONE);
-            }
-        });
-
         mDateSetListener = (datePicker, year, month, day) -> {
-
-            String d = String.valueOf(day);
-            String m = String.valueOf(month + 1);
-            Log.e("month", m + "");
             month = month + 1;
-            Log.e("month", month + "");
-            if (String.valueOf(day).length() == 1)
-                d = "0" + day;
-            if (String.valueOf(month).length() == 1)
-                m = "0" + month;
-            String date = d + "." + m + "." + year;
-            if (check_ == 0) {
-                date_txt.setText(date);
-                //date = year + m + d;
-                // fd_dot=year+"-"+m+"-"+d;
-            }
+            String date = day + "/" + month + "/" + year;
+            dob.setText(date);
         };
 
-        back_btn.setOnClickListener(v -> {
+        backButton.setOnClickListener(v -> {
             finish();
         });
 
-        upload_pic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Ask for permission
-                if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//        upload_pic.setOnClickListener(view -> {
+//            //Ask for permission
+//            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//                ActivityCompat.requestPermissions(Edit.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_STORAGE_PERMISSION);
+//            } else {
+//                Intent intent = new Intent();
+//                intent.setType("image/*");
+//                intent.setAction(Intent.ACTION_GET_CONTENT);
+//                resultLauncher.launch(intent);
+//            }
+//        });
+//
+//        resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+//            if (result.getResultCode() == Activity.RESULT_OK) {
+//                if (result.getData() != null) {
+//                    imageUri = result.getData().getData();
+//                    shopImage.setVisibility(View.VISIBLE);
+//                    shopImage.setImageURI(imageUri);
+//                    addImageNote(imageUri);
+//                }
+//            }
+//        });
+
+        // Declare your ActivityResultLauncher to handle the image selection result
+        resultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        imageUri = result.getData().getData();
+                        shopImage.setVisibility(View.VISIBLE);
+                        shopImage.setImageURI(imageUri);
+                        addImageNote(imageUri);
+                        openImagePicker();
+                    }
+                });
+
+        // Set the click listener for the upload_pic view
+        upload_pic.setOnClickListener(view -> {
+            // Check if the OS is Android 13 or above
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                // Check if permission to read media images has been granted
+                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                    // Request permission to read media images if not granted
+                    ActivityCompat.requestPermissions(Edit.this, new String[]{Manifest.permission.READ_MEDIA_IMAGES}, REQUEST_CODE_STORAGE_PERMISSION);
+                } else {
+                    // Permission granted, open image picker
+                    openImagePicker();
+                }
+            } else {
+                // For devices running Android 12 and below
+                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    // Request permission to read external storage if not granted
                     ActivityCompat.requestPermissions(Edit.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_STORAGE_PERMISSION);
                 } else {
-                       /* Dialog dialog = new Dialog(Edit.this);
-                        dialog.setContentView(R.layout.dialog_picture_capture);
-                        TextView camera = dialog.findViewById(R.id.camera);
-                        TextView storage = dialog.findViewById(R.id.storage);
-                        storage.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {*/
-                    Intent intent = new Intent();
-                    intent.setType("image/*");
-                    intent.setAction(Intent.ACTION_GET_CONTENT);
-                    resultLauncher.launch(intent);
-                    //dialog.dismiss();
-                }
-                /*        });
-
-                        camera.setOnClickListener(new View.OnClickListener() {
-                                                      @Override
-                                                      public void onClick(View view) {
-                                dexterCalling(Edit.this);
-                                dialog.dismiss();
-                                                          Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                          // Start the activity with camera_intent, and request pic id
-                                                          startActivityForResult(camera_intent, pic_id);
-                                                      }
-                                                  });
-
-
-                        Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        dialog.show();
-                    }
-            }*/
-            }
-        });
-
-        resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (result.getResultCode() == Activity.RESULT_OK) {
-                if (result.getData() != null) {
-                    imageUri = result.getData().getData();
-                    shopImage.setVisibility(View.VISIBLE);
-                    shopImageUri = imageUri.toString();
-                    shopImage.setImageURI(imageUri);
-                    Log.e("check_uri",imageUri.toString());
-                    addImageNote(imageUri);
+                    // Permission granted, open image picker
+                    openImagePicker();
                 }
             }
         });
+
+        removeProfilePic.setOnClickListener(view -> {
+            shopImage.setVisibility(View.GONE);
+            selectedImagePath = "";
+            reference.child("dp_link").get().addOnSuccessListener(dataSnapshot -> {
+                String imageUrl = dataSnapshot.getValue(String.class);
+
+                if (imageUrl != null && !imageUrl.isEmpty()) {
+                    // Create a reference to the existing image in Firebase Storage
+                    StorageReference imageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+
+                    // Delete the image from Firebase Storage
+                    imageRef.delete().addOnSuccessListener(aVoid -> {
+                        // Clear the dp_link field in the database
+                        reference.child("dp_link").removeValue().addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(Edit.this, "Profile picture removed successfully.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(Edit.this, "Failed to update database.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(Edit.this, "Failed to delete image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+                } else {
+                    Toast.makeText(Edit.this, "No profile picture to remove.", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(e -> {
+                Toast.makeText(Edit.this, "Failed to retrieve profile picture: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
+        });
+
     }
+
+    // Method to open the image picker
+    private void openImagePicker() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        resultLauncher.launch(intent);
+    }
+
 
     private void valueGetting() {
 
@@ -415,30 +353,28 @@ public class Edit extends AppCompatActivity implements AdapterView.OnItemSelecte
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    gen = snapshot.child("gender").getValue(String.class);
-                    dateOfBirth = snapshot.child("dob").getValue(String.class);
-                    bioo = snapshot.child("bio").getValue(String.class);
-                    fcb = snapshot.child("fb").getValue(String.class);
-                    inst = snapshot.child("insta").getValue(String.class);
-                    lin = snapshot.child("linkedin").getValue(String.class);
-                    twt = snapshot.child("twitter").getValue(String.class);
-                    occup = snapshot.child("occupation").getValue(String.class);
-                    organ = snapshot.child("organization").getValue(String.class);
-                    desig = snapshot.child("designation").getValue(String.class);
-                    nam = snapshot.child("name").getValue(String.class);
-                    br = snapshot.child("branch").getValue(String.class);
-                    py = snapshot.child("passout").getValue(String.class);
-                    countr = snapshot.child("country").getValue(String.class);
-                    stat = snapshot.child("state").getValue(String.class);
-                    cit = snapshot.child("city").getValue(String.class);
-                    dp_uri = snapshot.child("dp_link").getValue(String.class);
+                    userDataModel = snapshot.getValue(UserDataModel.class);
+                    assert userDataModel != null;
+                    gender = userDataModel.getGender() != null ? userDataModel.getGender() : "Male";
+                    uDob = userDataModel.getDob() != null ? userDataModel.getDob() : "";
+                    uName = userDataModel.getName() != null ? userDataModel.getName() : "";
+                    uBranch = userDataModel.getBranch() != null ? userDataModel.getBranch() : "";
+                    uBatch = userDataModel.getBatch() != null ? userDataModel.getBatch() : "";
+                    uCountry = userDataModel.getCountry() != null ? userDataModel.getCountry() : "";
+                    uState = userDataModel.getState() != null ? userDataModel.getState() : "";
+                    uCity = userDataModel.getCity() != null ? userDataModel.getCity() : "";
+                    uBio = userDataModel.getBio() != null ? userDataModel.getBio() : "";
+                    uDesignation = userDataModel.getDesignation() != null ? userDataModel.getDesignation() : "";
+                    uOrganization = userDataModel.getOrganization() != null ? userDataModel.getOrganization() : "";
+                    uPhone = userDataModel.getPhone() != null ? userDataModel.getPhone() : "";
+                    uEmail = userDataModel.getEmail() != null ? userDataModel.getEmail() : "";
+                    uFacebook = userDataModel.getFb() != null ? userDataModel.getFb() : "";
+                    uInstagram = userDataModel.getInsta() != null ? userDataModel.getInsta() : "";
+                    uLinkedin = userDataModel.getLinkedin() != null ? userDataModel.getLinkedin() : "";
+                    uTwitter = userDataModel.getTwitter() != null ? userDataModel.getTwitter() : "";
+                    isContactVisible = userDataModel.isContact_visibility();
 
-                    male.setOnClickListener(v -> {
-                        male.setBackgroundResource(R.drawable.bg_selector);
-                        female.setBackgroundResource(R.drawable.bg_male);
-                        gender = "Male";
-                    });
-
+                    String dp_uri = userDataModel.getDp_link() != null ? userDataModel.getDp_link() : "";
                     if (!dp_uri.equals("")) {
                         shopImage.setVisibility(View.VISIBLE);
                         try {
@@ -449,14 +385,8 @@ public class Edit extends AppCompatActivity implements AdapterView.OnItemSelecte
                         }
                     }
 
-                    female.setOnClickListener(v -> {
-                        female.setBackgroundResource(R.drawable.bg_selector);
-                        male.setBackgroundResource(R.drawable.bg_male);
-                        gender = "Female";
-                    });
-
-                    //setting values
-                    if (gen.equals("Male")) {
+                    // setting values
+                    if (gender.equals("Male")) {
                         male.setBackgroundResource(R.drawable.bg_selector);
                         female.setBackgroundResource(R.drawable.bg_male);
                         gender = "Male";
@@ -466,20 +396,23 @@ public class Edit extends AppCompatActivity implements AdapterView.OnItemSelecte
                         gender = "Female";
                     }
 
-                    date_txt.setText(dateOfBirth);
-                    bio.setText(bioo);
-                    fb.setText(fcb);
-                    twitter.setText(twt);
-                    linkidin.setText(lin);
-                    insta.setText(inst);
-                    organiztion.setText(organ);
-                    designation.setText(desig);
-                    name.setText(nam);
-                    branch.setText(br);
-                    passout_yr.setText(py);
-                    country.setText(countr);
-                    state.setText(stat);
-                    city.setText(cit);
+                    name.setText(uName);
+                    branch.setText(uBranch);
+                    batch.setText(uBatch);
+                    dob.setText(uDob);
+                    country.setText(uCountry);
+                    state.setText(uState);
+                    city.setText(uCity);
+                    bio.setText(uBio);
+                    designation.setText(uDesignation);
+                    organization.setText(uOrganization);
+                    phone.setText(uPhone);
+                    email.setText(uEmail);
+                    facebook.setText(uFacebook);
+                    instagram.setText(uInstagram);
+                    linkedin.setText(uLinkedin);
+                    twitter.setText(uTwitter);
+                    contactVisibility.setChecked(isContactVisible);
 
                 }
             }
@@ -491,104 +424,8 @@ public class Edit extends AppCompatActivity implements AdapterView.OnItemSelecte
         });
     }
 
-    private void ValueGetting(){
-        Intent intent = getIntent();
-        nam =  intent.getStringExtra("name");
-        dateOfBirth =  intent.getStringExtra("dob");
-        gen =  intent.getStringExtra("gender");
-        bioo =  intent.getStringExtra("bio");
-        fcb =  intent.getStringExtra("fb");
-        twt =  intent.getStringExtra("twitter");
-        lin =  intent.getStringExtra("linkedin");
-        inst =  intent.getStringExtra("instagram");
-        occup =  intent.getStringExtra("occupation");
-        organ =  intent.getStringExtra("organisation");
-        desig =  intent.getStringExtra("designation");
-        br =  intent.getStringExtra("branch");
-        py =  intent.getStringExtra("passout_yr");
-        countr =  intent.getStringExtra("country");
-        stat =  intent.getStringExtra("state");
-        cit =  intent.getStringExtra("city");
-        dp_uri =  intent.getStringExtra("dp_link");
-
-        male.setOnClickListener(v -> {
-            male.setBackgroundResource(R.drawable.bg_selector);
-            female.setBackgroundResource(R.drawable.bg_male);
-            gender = "Male";
-        });
-
-
-        female.setOnClickListener(v -> {
-            female.setBackgroundResource(R.drawable.bg_selector);
-            male.setBackgroundResource(R.drawable.bg_male);
-            gender = "Female";
-        });
-
-        //setting values
-        Log.e("checking_gender",gen);
-        if (!gen.equals("")) {
-            if (gen.equals("Male")) {
-                male.setBackgroundResource(R.drawable.bg_selector);
-                female.setBackgroundResource(R.drawable.bg_male);
-            } else {
-                female.setBackgroundResource(R.drawable.bg_selector);
-                male.setBackgroundResource(R.drawable.bg_male);
-            }
-            gender = "Male";
-        }
-
-        if (!dp_uri.equals("")){
-            try {
-                Uri uri = Uri.parse(dp_uri);
-                shopImage.setImageURI(uri);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        date_txt.setText(dateOfBirth);
-        bio.setText(bioo);
-        fb.setText(fcb);
-        twitter.setText(twt);
-        linkidin.setText(lin);
-        insta.setText(inst);
-        organiztion.setText(organ);
-        designation.setText(desig);
-        name.setText(nam);
-        branch.setText(br);
-        passout_yr.setText(py);
-        country.setText(countr);
-        state.setText(stat);
-        city.setText(cit);
-    }
-
-
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
-    }
-
-
-
-
-    private void uploadImage()
-    {
-        if (!selectedImagePath.equals("")) {
-
-            // Code for showing progressDialog while uploading
-               /* ProgressDialog progressDialog
-                        = new ProgressDialog(this);
-                progressDialog.setTitle("Uploading...");
-                progressDialog.show();*/
-
-            //animation.setVisibility(View.VISIBLE);
-
-            //if image is there...
+    private void uploadImage() {
+        if (!selectedImagePath.isEmpty()) {
             dialog = new Dialog(Edit.this);
             dialog.setCancelable(false);
             dialog.setContentView(R.layout.loading);
@@ -600,7 +437,7 @@ public class Edit extends AppCompatActivity implements AdapterView.OnItemSelecte
 
 
             //for image storing
-            String imagepath = "Profile/" + name.getText().toString().trim() + pushkey + ".png";
+            String imagepath = "Profile/" + user.getUid() + pushkey + ".png";
 
             StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(imagepath);
                                 /*final String randomKey = UUID.randomUUID().toString();
@@ -693,7 +530,6 @@ public class Edit extends AppCompatActivity implements AdapterView.OnItemSelecte
                                 });*/
         }
         else {
-            dataSend();
             dialog = new Dialog(Edit.this);
             dialog.setCancelable(false);
             dialog.setContentView(R.layout.loading);
@@ -707,34 +543,27 @@ public class Edit extends AppCompatActivity implements AdapterView.OnItemSelecte
                     finish();
                 }
             }, 1000);
-
         }
+        dataSend();
     }
 
     private void dataSend() {
 
-
-
-        //  animation.setVisibility(View.GONE);
-        occup = spino.getSelectedItem().toString();
-
         //uploadImage();
         reference.child("gender").setValue(gender);
-        reference.child("dob").setValue(date_txt.getText().toString());
+        reference.child("dob").setValue(dob.getText().toString());
         reference.child("bio").setValue(bio.getText().toString());
-        reference.child("fb").setValue(fb.getText().toString());
-        reference.child("insta").setValue(insta.getText().toString());
+        reference.child("fb").setValue(facebook.getText().toString());
+        reference.child("insta").setValue(instagram.getText().toString());
         reference.child("twitter").setValue(twitter.getText().toString());
-        reference.child("linkedin").setValue(linkidin.getText().toString());
-        reference.child("occupation").setValue(occup);
-        reference.child("organization").setValue(organiztion.getText().toString());
+        reference.child("linkedin").setValue(linkedin.getText().toString());
+        reference.child("organization").setValue(organization.getText().toString());
         reference.child("designation").setValue(designation.getText().toString());
-        reference.child("name").setValue(name.getText().toString());
-        reference.child("branch").setValue(branch.getText().toString());
-        reference.child("passout").setValue(passout_yr.getText().toString());
         reference.child("country").setValue(country.getText().toString());
         reference.child("state").setValue(state.getText().toString());
         reference.child("city").setValue(city.getText().toString());
+        reference.child("phone").setValue(phone.getText().toString());
+        reference.child("contact_visibility").setValue(contactVisibility.isChecked());
 
     }
 
@@ -749,17 +578,17 @@ public class Edit extends AppCompatActivity implements AdapterView.OnItemSelecte
     }
 
 
-    private void back(){
-        if(((FragmentActivity) Edit.this).getSupportFragmentManager().findFragmentById(R.id.drawer) != null) {
-            ((FragmentActivity) Edit.this).getSupportFragmentManager()
-                    .beginTransaction().
-                    remove(Objects.requireNonNull(((FragmentActivity) Edit.this).getSupportFragmentManager().findFragmentById(R.id.drawer))).commit();
-        }
-        ((FragmentActivity) Edit.this).getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.container,new Profile())
-                .commit();
-    }
+//    private void back(){
+//        if(((FragmentActivity) Edit.this).getSupportFragmentManager().findFragmentById(R.id.drawer) != null) {
+//            ((FragmentActivity) Edit.this).getSupportFragmentManager()
+//                    .beginTransaction().
+//                    remove(Objects.requireNonNull(((FragmentActivity) Edit.this).getSupportFragmentManager().findFragmentById(R.id.drawer))).commit();
+//        }
+//        ((FragmentActivity) Edit.this).getSupportFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.container,new Profile())
+//                .commit();
+//    }
 
     public String compressImage(String imageUri) {
 
@@ -887,7 +716,6 @@ public class Edit extends AppCompatActivity implements AdapterView.OnItemSelecte
             file.mkdirs();
         }
         return (file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
-
     }
 
     private static String getRealPathFromURI(Uri uri, Context context) {
@@ -924,18 +752,18 @@ public class Edit extends AppCompatActivity implements AdapterView.OnItemSelecte
         return file.getPath();
     }
 
-    private String getRealPathFromURI(String contentURI) {
-        Uri contentUri = Uri.parse(contentURI);
-        Cursor cursor = getContentResolver().query(contentUri, null, null, null, null);
-        if (cursor == null) {
-            return contentUri.getPath();
-        } else {
-            cursor.moveToFirst();
-            int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            Log.e("column",index+"");
-            return cursor.getString(index)+"";
-        }
-    }
+//    private String getRealPathFromURI(String contentURI) {
+//        Uri contentUri = Uri.parse(contentURI);
+//        Cursor cursor = getContentResolver().query(contentUri, null, null, null, null);
+//        if (cursor == null) {
+//            return contentUri.getPath();
+//        } else {
+//            cursor.moveToFirst();
+//            int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+//            Log.e("column",index+"");
+//            return cursor.getString(index)+"";
+//        }
+//    }
 
     public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;

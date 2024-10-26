@@ -59,7 +59,6 @@ public class JobSection extends Fragment {
     JobAdapter jobAdapter;
     RecyclerView recyclerView;
     Context contextNullSafe;
-    String value = "";
 
 
     @Override
@@ -98,15 +97,6 @@ public class JobSection extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
 
-        if (check_for_admin()){
-            value = "Admin";
-            get_data(value);
-        }
-        else {
-            value = "noAdmin";
-            get_data(value);
-        }
-
 
         search.addTextChangedListener(new TextWatcher() {
 
@@ -119,7 +109,8 @@ public class JobSection extends Fragment {
             }
         });
 
-        mSwipeRefreshLayout.setOnRefreshListener(this::get_data1);
+        get_data();
+        mSwipeRefreshLayout.setOnRefreshListener(this::get_data);
 
         OnBackPressedCallback callback=new OnBackPressedCallback(true) {
             @Override
@@ -137,11 +128,10 @@ public class JobSection extends Fragment {
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(),callback);
 
-
         return view;
     }
 
-    private void get_data1() {
+    private void get_data() {
 
         mSwipeRefreshLayout.setRefreshing(true);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -150,25 +140,17 @@ public class JobSection extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     list.clear();
-                    mylist.clear();
                     mSwipeRefreshLayout.setRefreshing(false);
                     load.setVisibility(View.GONE);
                     loadText.setVisibility(View.GONE);
                     for (DataSnapshot ds : snapshot.getChildren()) {
                         list.add(snapshot.child(Objects.requireNonNull(ds.getKey())).getValue(JobModel.class));
                     }
-
                     Collections.reverse(list);
-                    jobAdapter = new JobAdapter(list, getContextNullSafety(),value);
+                    jobAdapter = new JobAdapter(list, getContextNullSafety());
                     jobAdapter.notifyDataSetChanged();
                     if (recyclerView != null)
                         recyclerView.setAdapter(jobAdapter);
-                } else {
-                    load.setVisibility(View.VISIBLE);
-                    loadText.setVisibility(View.VISIBLE);
-                   /* mSwipeRefreshLayout.setRefreshing(false);
-                    progressBar.setVisibility(View.VISIBLE);*/
-
                 }
             }
 
@@ -178,42 +160,41 @@ public class JobSection extends Fragment {
         });
     }
 
-    private void get_data(String isAdmin) {
-
-        mSwipeRefreshLayout.setRefreshing(true);
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    list.clear();
-                    mylist.clear();
-                    mSwipeRefreshLayout.setRefreshing(false);
-                    load.setVisibility(View.GONE);
-                    loadText.setVisibility(View.GONE);
-                    for (DataSnapshot ds : snapshot.getChildren()) {
-                        list.add(snapshot.child(Objects.requireNonNull(ds.getKey())).getValue(JobModel.class));
-                    }
-
-                    Collections.reverse(list);
-                    jobAdapter = new JobAdapter(list, getContextNullSafety(),isAdmin);
-                    jobAdapter.notifyDataSetChanged();
-                    if (recyclerView != null)
-                        recyclerView.setAdapter(jobAdapter);
-                } else {
-                    load.setVisibility(View.VISIBLE);
-                    loadText.setVisibility(View.VISIBLE);
-                   /* mSwipeRefreshLayout.setRefreshing(false);
-                    progressBar.setVisibility(View.VISIBLE);*/
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-    }
+//    private void get_data(String isAdmin) {
+//        mSwipeRefreshLayout.setRefreshing(true);
+//        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @SuppressLint("NotifyDataSetChanged")
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                if (snapshot.exists()) {
+//                    list.clear();
+//                    mylist.clear();
+//                    mSwipeRefreshLayout.setRefreshing(false);
+//                    load.setVisibility(View.GONE);
+//                    loadText.setVisibility(View.GONE);
+//                    for (DataSnapshot ds : snapshot.getChildren()) {
+//                        list.add(snapshot.child(Objects.requireNonNull(ds.getKey())).getValue(JobModel.class));
+//                    }
+//
+//                    Collections.reverse(list);
+//                    jobAdapter = new JobAdapter(list, getContextNullSafety());
+//                    jobAdapter.notifyDataSetChanged();
+//                    if (recyclerView != null)
+//                        recyclerView.setAdapter(jobAdapter);
+//                } else {
+//                    load.setVisibility(View.GONE);
+//                    loadText.setVisibility(View.GONE);
+//                   /* mSwipeRefreshLayout.setRefreshing(false);
+//                    progressBar.setVisibility(View.VISIBLE);*/
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//            }
+//        });
+//    }
 
     private boolean check_for_admin(){
         SharedPreferences pref = getContextNullSafety().getSharedPreferences("our_user?", MODE_PRIVATE);
@@ -239,11 +220,13 @@ public class JobSection extends Fragment {
                 e.printStackTrace();
             }
         }
-        JobAdapter userAdapter = new JobAdapter(mylist,getContextNullSafety(),value);
+        JobAdapter userAdapter = new JobAdapter(mylist,getContextNullSafety());
         userAdapter.notifyDataSetChanged();
         if (recyclerView != null)
             recyclerView.setAdapter(userAdapter);
     }
+
+
     public Context getContextNullSafety() {
         if (getContext() != null) return getContext();
         if (getActivity() != null) return getActivity();

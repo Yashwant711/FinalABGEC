@@ -1,28 +1,26 @@
 package com.nikhil.finalabgec;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
+import android.graphics.PorterDuff;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,7 +37,6 @@ import android.widget.Toast;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -53,13 +50,8 @@ import com.nikhil.finalabgec.Fragment.AlumniList;
 import com.nikhil.finalabgec.Fragment.ImageFragment;
 import com.nikhil.finalabgec.Fragment.JobSection;
 import com.nikhil.finalabgec.Fragment.Post;
-import com.nikhil.finalabgec.Fragment.Privacy;
 import com.nikhil.finalabgec.Fragment.Profile;
-import com.nikhil.finalabgec.Fragment.ViewPost;
 
-import java.io.File;
-import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 import me.ibrahimsn.lib.OnItemSelectedListener;
@@ -68,11 +60,12 @@ import www.sanju.motiontoast.MotionToast;
 
 public class MainActivity extends AppCompatActivity {
 
+    String uid;
+
     SmoothBottomBar bottomBar;
     Toolbar toolbar;
     NavigationView navView;
     Uri deep_link_uri;
-    OnBackPressedListener onBackpressedListener;
     GoogleSignInClient mGoogleSignInClient;
     DrawerLayout drawer;
     Dialog dialog;
@@ -82,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     TextView yes,no,text1,text2;
     DatabaseReference user_ref;
     ImageView globe;
-    FloatingActionButton add,job,post;
+    FloatingActionButton add,job,post, admin;
     Animation rotateOpen,rotateClose,fromBottom,toBottom;
 
     String date = "";
@@ -109,8 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
-       /* user =
-       //SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);*/
+        uid = user.getUid();
 
         rotateOpen =  AnimationUtils.loadAnimation(this,R.anim.rotate_open_anim);
         rotateClose = AnimationUtils.loadAnimation(this,R.anim.rotate_close_anim);
@@ -124,22 +116,26 @@ public class MainActivity extends AppCompatActivity {
         add = findViewById(R.id.add_f);
         job = findViewById(R.id.job);
         post = findViewById(R.id.post);
+        admin = findViewById(R.id.admin_panel);
+
+        check_for_admin();
+        check_for_student();
 
         setSupportActionBar(toolbar);
 
-        deep_link_uri = getIntent().getData();//deep link value
+        deep_link_uri = getIntent().getData();
 
         // Show main fragment in container
        goToFragment(new Post());
 
-        //set default home fragment and its title
+        //  set default home fragment and its title
         Objects.requireNonNull(getSupportActionBar()).setTitle("");
-        //getSupportFragmentManager().beginTransaction().replace(R.id.container, new Post()).commit();
+        //  getSupportFragmentManager().beginTransaction().replace(R.id.container, new Post()).commit();
         navView.setCheckedItem(R.id.nav_home);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.open, R.string.close);
         drawer.addDrawerListener(toggle);
-        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.main_blue));
+        toggle.getDrawerArrowDrawable().setColorFilter(ContextCompat.getColor(this, R.color.main_blue), PorterDuff.Mode.SRC_ATOP);
         toggle.syncState();
 
         globe.setOnClickListener(v -> {
@@ -153,17 +149,15 @@ public class MainActivity extends AppCompatActivity {
             OnAddButtonClick();
         });
 
-
-
         //edit fab button on click
         job.setOnClickListener(v->{
-
             OnAddButtonClick();
             MainActivity.this.getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.change_layout, new AddJob(), "list_announcement")
                     .commit();
         });
+
         //setting fab button on click
         post.setOnClickListener(v->{
             OnAddButtonClick();
@@ -173,10 +167,12 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         });
 
-        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        boolean connected = (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED);
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network activeNetwork = connectivityManager.getActiveNetwork();
+        NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork);
+        boolean connected = networkCapabilities != null &&
+                (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                        networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
 
         if (!connected){
             MotionToast.Companion.darkColorToast(MainActivity.this,
@@ -188,20 +184,22 @@ public class MainActivity extends AppCompatActivity {
                     ResourcesCompat.getFont(MainActivity.this, R.font.poppins));
         }
 
-        Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
-        List<Address> addresses = null;
-     /*   try {
+//        Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
+//        List<Address> addresses = null;
+
+        /*try {
             addresses = geocoder.getFromLocation(22.057280, 82.170952, 1);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }*/
+
        /* String address = addresses.get(0).getSubLocality();
         String cityName = addresses.get(0).getLocality();
         String stateName = addresses.get(0).getAdminArea();
         String country = addresses.get(0).getCountryName();
         Log.e("cityName",cityName);
         Log.e("stateName",stateName);
-        Log.e("countryName",country);*/
+        Log.e("countryName",country); */
 
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             Fragment fragment = null;
@@ -222,13 +220,15 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new ImageFragment();
                     drawer.closeDrawer(GravityCompat.START);
                     navView.getMenu().getItem(1).setCheckable(false);
-                    callFragment2(fragment);
-                } else if (itemId == R.id.privacy) {
-                    fragment = new Privacy();
-                    drawer.closeDrawer(GravityCompat.START);
-                    navView.getMenu().getItem(3).setCheckable(false);
-                    callFragment2(fragment);
-                } else if (itemId == R.id.nav_logout) {
+                    callFragment(fragment);
+                }
+//                else if (itemId == R.id.privacy) {
+//                    fragment = new Privacy();
+//                    drawer.closeDrawer(GravityCompat.START);
+//                    navView.getMenu().getItem(3).setCheckable(false);
+//                    callFragment2(fragment);
+//                }
+                else if (itemId == R.id.nav_logout) {
                     dialog = new Dialog(MainActivity.this);
                     dialog.setContentView(R.layout.dialog_logout);
                     dialog.setCancelable(false);
@@ -239,8 +239,7 @@ public class MainActivity extends AppCompatActivity {
 
                     yes.setOnClickListener(v -> {
                         dialog.dismiss();
-                        navView.getMenu().getItem(8).setCheckable(false);
-                        //deleteCache(MainActivity.this);
+//                        navView.getMenu().getItem(8).setCheckable(false);
                         auth.signOut();
                         startActivity(new Intent(MainActivity.this, Login.class));
                         finish();
@@ -248,10 +247,11 @@ public class MainActivity extends AppCompatActivity {
 
                     no.setOnClickListener(v -> {
                         dialog.dismiss();
-                        navView.getMenu().getItem(8).setCheckable(false);
+//                        navView.getMenu().getItem(0).setCheckable(false);
                         drawer.closeDrawer(GravityCompat.START);
                     });
-                } // Remove the commented-out part if it's not needed
+                }
+                // Remove the commented-out part if it's not needed
                 // else if (itemId == ...) {
                 //     // Additional cases can be added here
                 // }
@@ -261,9 +261,12 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        if (check_for_student()) {
-            add.setVisibility(View.GONE);
-        }
+//        if(isStudent) {
+//            add.setVisibility(View.GONE);
+//        }
+//        if(!isAdmin) {
+//            admin.setVisibility(View.GONE);
+//        }
 
 //        if (getSupportFragmentManager().findFragmentById(R.id.container) != null) {
 //            getSupportFragmentManager()
@@ -279,93 +282,84 @@ public class MainActivity extends AppCompatActivity {
         bottomBar.setItemActiveIndex(0);
 
         bottomBar.setOnItemSelectedListener((OnItemSelectedListener) i -> {
+            Fragment selectedFragment;
+            String tag;
 
-
-            if (i == 0) {
-                bottomBar.setItemActiveIndex(0);
-                if (MainActivity.this.getSupportFragmentManager().findFragmentById(R.id.container) != null) {
-                    MainActivity.this.getSupportFragmentManager()
-                            .beginTransaction().
-                            remove(Objects.requireNonNull(MainActivity.this.getSupportFragmentManager().findFragmentById(R.id.container))).commit();
-                }
-                MainActivity.this.getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.container, new Post())
-                        .commit();
+            switch (i) {
+                case 0:
+                    selectedFragment = new Post();
+                    tag = "post_fragment";
+                    break;
+                case 1:
+                    selectedFragment = new JobSection();
+                    tag = "job_section_fragment";
+                    break;
+                case 2:
+                    selectedFragment = new AlumniList();
+                    tag = "alumni_list_fragment";
+                    break;
+                case 3:
+                    selectedFragment = new Profile();
+                    tag = "profile_fragment";
+                    break;
+                default:
+                    return false;
             }
-            else if (i == 1) {
-                bottomBar.setItemActiveIndex(1);
-                /*Intent intent = new Intent(Home.this , Home.class);
-                startActivity(intent);*/
 
-                if (getSupportFragmentManager().findFragmentById(R.id.container) != null) {
-                    getSupportFragmentManager()
-                            .beginTransaction().
-                            remove(Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.container))).commit();
-                }
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.container, new JobSection())
-                        .commit();
-            } else if (i == 2) {
-                bottomBar.setItemActiveIndex(2);
-                if (MainActivity.this.getSupportFragmentManager().findFragmentById(R.id.container) != null) {
-                    MainActivity.this.getSupportFragmentManager()
-                            .beginTransaction().
-                            remove(Objects.requireNonNull(MainActivity.this.getSupportFragmentManager().findFragmentById(R.id.container))).commit();
-                }
-                MainActivity.this.getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.container, new AlumniList(), "list_announcement")
-                        .commit();
-            } else if (i == 3) {
-                if (check_for_student()) {
-                    MotionToast.Companion.darkColorToast(MainActivity.this,
-                            "Access Denied ☹️",
-                            "You do not have authority to access your profile",
-                            MotionToast.TOAST_ERROR,
-                            MotionToast.GRAVITY_BOTTOM,
-                            MotionToast.LONG_DURATION,
-                            ResourcesCompat.getFont(MainActivity.this, R.font.poppins));
-                }
-                else {
-                    bottomBar.setItemActiveIndex(3);
-                    if (MainActivity.this.getSupportFragmentManager().findFragmentById(R.id.container) != null) {
-                        MainActivity.this.getSupportFragmentManager()
-                                .beginTransaction().
-                                remove(Objects.requireNonNull(MainActivity.this.getSupportFragmentManager().findFragmentById(R.id.container))).commit();
-                    }
-                    MainActivity.this.getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.container, new Profile(), "list_announcement")
-                            .commit();
-                }
-            }
-            return false;
+            // Replace the existing fragment with the selected one
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.container, selectedFragment, tag)
+                    .commit();
+
+            // Set the selected item index (if needed)
+            bottomBar.setItemActiveIndex(i);
+
+            return true;
         });
 
+        admin.setOnClickListener( v -> {
+            Intent intent = new Intent(MainActivity.this, AdminPanel.class);
+            startActivity(intent);
+        });
+
+        // Handle the back button press
+//        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+//            @Override
+//            public void handleOnBackPressed() {
+////                FragmentManager fragmentManager = getSupportFragmentManager();
+//                finish();
+////                // If there are fragments in the back stack, pop the last one
+////                if (fragmentManager.getBackStackEntryCount() > 0) {
+////                    fragmentManager.popBackStack();
+////                } else {
+////                    // Otherwise, exit the app
+////                    finish();  // or use super.onBackPressed(); if you want to keep default behavior
+////                }
+//            }
+//        });
+
     }
 
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        topic topic=new topic();
+//        String val = "";
+//        topic.noti("","" , val);
+//        Log.e("notification_intent",val);
+//        if (val.equals("fromjob")){
+//            Toast.makeText(MainActivity.this, "Getting from Job section notification  ", Toast.LENGTH_SHORT).show();
+//        }
+//        check_for_student();
+//    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-       /* topic topic=new topic();
-        String val = "";
-        topic.noti("","" , val);
-        Log.e("notification_intent",val);
-        if (val.equals("fromjob")){
-            Toast.makeText(MainActivity.this, "Getting from Job section notification  ", Toast.LENGTH_SHORT).show();
-        }*/
-        check_for_student();
-    }
-
-    public static void deleteCache(Context context) {
-        try {
-            File dir = context.getCacheDir();
-            deleteDir(dir);
-        } catch (Exception e) { e.printStackTrace();}
-    }
+//    public static void deleteCache(Context context) {
+//        try {
+//            File dir = context.getCacheDir();
+//            deleteDir(dir);
+//        } catch (Exception e) { e.printStackTrace();}
+//    }
 
     private void OnAddButtonClick() {
         setVisibility(closed);
@@ -399,33 +393,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    public static boolean deleteDir(File dir) {
-        if (dir != null && dir.isDirectory()) {
-            String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    return false;
-                }
-            }
-            return dir.delete();
-        } else if(dir!= null && dir.isFile()) {
-            return dir.delete();
-        } else {
-            return false;
-        }
-    }
-
     private void callFragment(Fragment fragment) {
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-        transaction.replace(R.id.container, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
-    private void callFragment2(Fragment fragment) {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
@@ -436,109 +404,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void goToFragment(Fragment fragment) {
-        if(deep_link_uri!=null){
-            Toast.makeText(this, "jhdsahjhsja", Toast.LENGTH_SHORT).show();
-            if (deep_link_uri.toString().equals("https://abgec.android")){
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.add(R.id.container, fragment,"mainFrag").commit();
-            }
-            else if(deep_link_uri.toString().equals("http://abgec.android")){
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.add(R.id.container, fragment,"mainFrag").commit();
-            }
-            else if(deep_link_uri.toString().equals("abgec.android")){
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.add(R.id.container, fragment,"mainFrag").commit();
-            }
-            else{
-                // if the uri is not null then we are getting the
-                // path segments and storing it in list.
-                List<String> parameters = deep_link_uri.getPathSegments();
-                // after that we are extracting string from that parameters.
-                if(parameters!=null) {
-                    if(parameters.size()>1) {
-                        String check_profile=parameters.get(parameters.size()-2);
-                        if(check_profile.trim().equals("profile")){
-
-                            String name=parameters.get(parameters.size()-1);
-                            String uid=parameters.get(parameters.size()-3);
-                            //sending values to home_content frag for opening profile...
-                            Bundle args = new Bundle();
-                            args.putString("deep_link_name", name);
-                            args.putString("deep_link_uid_value_profile", uid);
-                            fragment.setArguments(args);
-                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                            transaction.add(R.id.container, fragment, "mainFrag").commit();
-
-                        }
-                        else {
-                            String param = parameters.get(parameters.size() - 1);
-                            String uid = parameters.get(parameters.size() - 2);
-                            // on below line we are setting
-                            // that string to our text view
-                            // which we got as params.
-//                            Log.e("deep_link_value", param + "");
-//                            Log.e("deep_link_value_uid", uid + "");
-//                            Bundle args = new Bundle();
-//                            args.putString("deep_link_value", param);
-//                            args.putString("deep_link_uid_value", uid);
-//                            fragment.setArguments(args);
-                            openPost("-NpfIjR8PErVkhS9ljnc", "QexL0OUC3CeipMupyrN485JtByB3");
-                            //openPost(param, uid);
-                        }
-                    }
-                    else{
-                        openPost("-NpfIjR8PErVkhS9ljnc", "QexL0OUC3CeipMupyrN485JtByB3");
-//                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//                        transaction.add(R.id.container, fragment,"mainFrag").commit();
-                    }
-                }
-            }
-        }
-        else{
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.add(R.id.container, fragment,"mainFrag").commit();
-        }
-    }
-
-    private void openPost(String push,String uid){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("posts").child(push);
-
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-               date = snapshot.child("date").getValue(String.class);
-                 name = snapshot.child("name").getValue(String.class);
-                title = snapshot.child("title").getValue(String.class);
-                 description = snapshot.child("description").getValue(String.class);
-                 image_link = snapshot.child("image_link").getValue(String.class);
-                 like = snapshot.child("like").getValue(String.class);
-                 link = snapshot.child("link").getValue(String.class);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        ViewPost profile = new ViewPost();
-        Bundle args = new Bundle();
-        args.putString("sending_user_from_home","addstack");
-        args.putString("uid_sending_post",uid);
-        args.putString("name",name);
-        args.putString("title",title);
-        args.putString("description",description);
-        args.putString("pushkey",push);
-        args.putString("image",image_link);
-        args.putString("date",date);
-        args.putString("like", like);
-        profile.setArguments(args);
-
-        MainActivity.this.getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.container,  profile)
-                .commit();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.container, fragment,"mainFrag").commit();
     }
 
     private void setStatusBarTransparent () {
@@ -551,37 +418,83 @@ public class MainActivity extends AppCompatActivity {
         window.setStatusBarColor(Color.TRANSPARENT);
     }
 
-    //on backpress
-//    @Override
-//    public void onBackPressed() {
-//        if (onBackpressedListener != null) {
-//            getSupportActionBar().setTitle("Home");
-//            navView.setCheckedItem(R.id.nav_home);
-//            onBackpressedListener.doBack();
-//            drawer.closeDrawer(GravityCompat.START);
-//        } else if (onBackpressedListener == null) {
-//            finish();
-//            super.onBackPressed();
-//        }
-//    }
 
-    public interface OnBackPressedListener {
-        void doBack();
+    private void check_for_student(){
+        try{
+            DatabaseReference cutoffRef = FirebaseDatabase.getInstance().getReference("BatchCutoff");
+            cutoffRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    String year = snapshot.getValue(String.class);
+                    if(year == null){
+                        year = "9999";
+                    }
+                    Log.d("BatchCutoff", "Year: " + year);
+                    final String cutoffYear = year;
+                    user_ref.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            String batchYear = dataSnapshot.child("batch").getValue(String.class);
+                            if(batchYear == null){
+                                batchYear = "0";
+                            }
+                            Log.d("Batch", "Year: " + batchYear);
+                            setIsStudent(batchYear, cutoffYear);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Log.e("FirebaseError", "Error reading data: " + databaseError.getMessage());
+                        }
+                    });
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+        catch( Exception e){
+            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+        }
+
     }
 
-    public void setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
-        this.onBackpressedListener = onBackPressedListener;
+    private void check_for_admin() {
+        try{
+            user_ref.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Boolean isAdmin = dataSnapshot.child("isAdmin").getValue(Boolean.class);
+                    if (isAdmin == null) {
+                        isAdmin = false;
+                    }
+                    if(isAdmin){
+                        setIsAdmin();
+                    }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e("FirebaseError", "Error reading data: " + databaseError.getMessage());
+                }
+            });
+        }
+        catch(Exception e){
+            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+            Log.d("TAG", e.toString());
+        }
     }
 
-    @Override
-    protected void onDestroy() {
-        onBackpressedListener = null;
-        super.onDestroy();
+    private void setIsStudent(String batchYear, String cutoffYear) {
+        int y1 = Integer.parseInt(batchYear);
+        int y2 = Integer.parseInt(cutoffYear);
+        if(y1 <= y2){
+            add.setVisibility(View.VISIBLE);
+        }
     }
 
-    private boolean check_for_student(){
-        SharedPreferences pref = getSharedPreferences("our_user?", MODE_PRIVATE);
-        return pref.getBoolean("student", true);
+    private void setIsAdmin() {
+        admin.setVisibility(View.VISIBLE);
     }
 
 }

@@ -52,11 +52,11 @@ public class AlumniListAdapter extends RecyclerView.Adapter<AlumniListAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
+//        auth = FirebaseAuth.getInstance();
+//        user = auth.getCurrentUser();
 
-        user_ref = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
-        reference = FirebaseDatabase.getInstance().getReference().child("ALUMNI_DATA").child("data");
+//        user_ref = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
+//        reference = FirebaseDatabase.getInstance().getReference().child("ALUMNI_DATA").child("data");
      /*   query = FirebaseDatabase.getInstance().getReference().child("ALUMNI_DATA").child("data")
                 .orderByKey()
                 .limitToFirst(10);*/
@@ -115,19 +115,19 @@ public class AlumniListAdapter extends RecyclerView.Adapter<AlumniListAdapter.Vi
             });
         }
 */
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds:snapshot.getChildren()) {
-                    reference.child(ds.getKey()).child("pushkey").setValue(ds.getKey());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+//        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                for (DataSnapshot ds:snapshot.getChildren()) {
+//                    reference.child(ds.getKey()).child("pushkey").setValue(ds.getKey());
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
      /*   user_ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -162,8 +162,8 @@ public class AlumniListAdapter extends RecyclerView.Adapter<AlumniListAdapter.Vi
             holder.location.setVisibility(View.GONE);
 
 
-        if (("+91" + list.get(position).getMobileNumber()).equals(user.getPhoneNumber()))
-            holder.edit.setVisibility(View.VISIBLE);
+//        if (("+91" + list.get(position).getMobileNumber()).equals(user.getPhoneNumber()))
+//            holder.edit.setVisibility(View.VISIBLE);
 
         holder.edit.setOnClickListener(v->{
             EditList editList = new EditList();
@@ -232,4 +232,5 @@ public class AlumniListAdapter extends RecyclerView.Adapter<AlumniListAdapter.Vi
             edit = itemView.findViewById(R.id.personal_btn);
         }
     }
+
 }

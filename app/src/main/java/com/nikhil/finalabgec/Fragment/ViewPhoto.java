@@ -34,6 +34,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.nikhil.finalabgec.R;
 
 import java.io.ByteArrayOutputStream;
@@ -55,7 +56,8 @@ public class ViewPhoto extends Fragment {
     String image_link;
     private Context contextNullSafe;
     boolean share_ready=false;
-    ImageView image ,back;
+    ImageView back;
+    PhotoView image;
     TextView download;
 
     Bitmap myBitmap; // Your bitmap image
@@ -77,7 +79,7 @@ public class ViewPhoto extends Fragment {
             e.printStackTrace();
         }
 
-        download = view.findViewById(R.id.download);
+//        download = view.findViewById(R.id.download);
         image=view.findViewById(R.id.imageView8 );
         back=view.findViewById(R.id.imageView4);
         back.setOnClickListener(v-> back());
@@ -103,41 +105,41 @@ public class ViewPhoto extends Fragment {
                 .into(image);
 
 
-        download.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                Handler handler = new Handler(Looper.getMainLooper());
-
-                executor.execute(() -> {
-                    File directory = new File(requireContext().getExternalFilesDir(null), "abgec");
-                    boolean success = directory.mkdirs();
-                    if (!success && !directory.exists()) {
-                        Log.w("DownloadImage", "Directory not created");
-                    } else {
-                        try {
-                            URL url = new URL(image_link);
-                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                            connection.setDoInput(true);
-                            connection.connect();
-                            InputStream input = connection.getInputStream();
-                            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-
-                            File imageFile = new File(directory, System.currentTimeMillis() + ".jpg");
-                            try (FileOutputStream stream = new FileOutputStream(imageFile)) {
-                                myBitmap.compress(Bitmap.CompressFormat.JPEG, 85, stream);
-                                stream.flush();
-                            }
-
-                            handler.post(() -> Toast.makeText(getContext(), "Image downloaded and saved at: " + imageFile.getAbsolutePath(), Toast.LENGTH_LONG).show());
-                            Log.i("DownloadImage", "Image downloaded and saved: " + imageFile.getAbsolutePath());
-                        } catch (Exception e) {
-                            Log.e("DownloadImage", "Error downloading image", e);
-                            handler.post(() -> Toast.makeText(getContext(), "Download Failed", Toast.LENGTH_SHORT).show());
-                        }
-                    }
-                });
-            }
-        });
+//        download.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                ExecutorService executor = Executors.newSingleThreadExecutor();
+//                Handler handler = new Handler(Looper.getMainLooper());
+//
+//                executor.execute(() -> {
+//                    File directory = new File(requireContext().getExternalFilesDir(null), "abgec");
+//                    boolean success = directory.mkdirs();
+//                    if (!success && !directory.exists()) {
+//                        Log.w("DownloadImage", "Directory not created");
+//                    } else {
+//                        try {
+//                            URL url = new URL(image_link);
+//                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//                            connection.setDoInput(true);
+//                            connection.connect();
+//                            InputStream input = connection.getInputStream();
+//                            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+//
+//                            File imageFile = new File(directory, System.currentTimeMillis() + ".jpg");
+//                            try (FileOutputStream stream = new FileOutputStream(imageFile)) {
+//                                myBitmap.compress(Bitmap.CompressFormat.JPEG, 85, stream);
+//                                stream.flush();
+//                            }
+//
+//                            handler.post(() -> Toast.makeText(getContext(), "Image downloaded and saved at: " + imageFile.getAbsolutePath(), Toast.LENGTH_LONG).show());
+//                            Log.i("DownloadImage", "Image downloaded and saved: " + imageFile.getAbsolutePath());
+//                        } catch (Exception e) {
+//                            Log.e("DownloadImage", "Error downloading image", e);
+//                            handler.post(() -> Toast.makeText(getContext(), "Download Failed", Toast.LENGTH_SHORT).show());
+//                        }
+//                    }
+//                });
+//            }
+//        });
 
 
 

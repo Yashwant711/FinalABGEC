@@ -149,7 +149,7 @@
             tools:text="3rd sem CSE" />
 
         <ImageView
-            android:id="@+id/delete"
+            android:id="@+id/share"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginEnd="15dp"

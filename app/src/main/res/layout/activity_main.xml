@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:id="@+id/change_layout"
     tools:context=".MainActivity">
 
@@ -55,8 +54,6 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
             </androidx.appcompat.widget.Toolbar>
 
             <FrameLayout
@@ -68,7 +65,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/layout">
-
             </FrameLayout>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
@@ -102,6 +98,7 @@
         android:layout_marginBottom="24dp"
         android:clickable="true"
         android:focusable="true"
+        android:visibility="gone"
         android:tint="@android:color/white"
         android:backgroundTint="@color/main_yellow"
         app:layout_constraintBottom_toTopOf="@+id/bottomBar"
@@ -174,6 +171,23 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@id/post"
         app:layout_constraintBottom_toTopOf="@id/job" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/admin_panel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        android:tint="@android:color/white"
+        android:backgroundTint="@color/main_yellow"
+        app:layout_constraintBottom_toTopOf="@+id/post"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/baseline_admin_panel_settings_24"
+        tools:ignore="VectorDrawableCompat"
+        android:contentDescription="TODO" />
 
 
     <me.ibrahimsn.lib.SmoothBottomBar

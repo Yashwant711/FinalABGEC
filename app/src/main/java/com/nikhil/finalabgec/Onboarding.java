@@ -12,12 +12,13 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.nikhil.finalabgec.Adapter.IntroViewPagerAdapter;
-import com.nikhil.finalabgec.Model.intro_ScreenItem;
+import com.nikhil.finalabgec.Model.IntroScreenItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,13 +33,12 @@ public class Onboarding extends AppCompatActivity {
     FirebaseAuth auth;
     FirebaseUser user;
     LinearLayout btnGetStarted;
-    Animation btnAnim;
     TextView tvSkip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // when this activity is about to be launch we need to check if its openened before or not
+        // when this activity is about to be launch we need to check if its opened before or not
         setContentView(R.layout.activity_onboarding);
         Window window = Onboarding.this.getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -54,10 +54,10 @@ public class Onboarding extends AppCompatActivity {
         //btnAnim = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.button_animation);
         tvSkip = findViewById(R.id.tv_skip);
         // fill list screen
-        final List<intro_ScreenItem> mList = new ArrayList<>();
-        mList.add(new intro_ScreenItem("Get to know our college", "About our teachers, students, clubs and activities.", R.drawable.ic_onboardlist));
-        mList.add(new intro_ScreenItem("Find Like-Minded People", "Connect with people with similar interests and hobbies.", R.drawable.ic_onboardjob));
-        mList.add(new intro_ScreenItem("Get Inspired", "Take inspiration as well as share your own experiences", R.drawable.ic_onboardlist));
+        final List<IntroScreenItem> mList = new ArrayList<>();
+        mList.add(new IntroScreenItem("Get to know our college", "About our teachers, students, clubs and activities.", R.drawable.ic_onboardlist));
+        mList.add(new IntroScreenItem("Find Like-Minded People", "Connect with people with similar interests and hobbies.", R.drawable.ic_onboardjob));
+        mList.add(new IntroScreenItem("Get Inspired", "Take inspiration as well as share your own experiences", R.drawable.ic_onboardlist));
         // setup viewpager
         screenPager = findViewById(R.id.screen_viewpager);
         introViewPagerAdapter = new IntroViewPagerAdapter(this, mList);
@@ -75,35 +75,36 @@ public class Onboarding extends AppCompatActivity {
             }
             if (position == mList.size() - 1) { // when we rech to the last screen
                 // TODO : show the GETSTARTED Button and hide the indicator and the next button
-                loaddLastScreen();
+                loadLastScreen();
             }
         });
-        // tablayout add change listener
-        tabIndicator.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
+
+        tabIndicator.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if (tab.getPosition() == mList.size() - 1) {
-                    loaddLastScreen();
+                    loadLastScreen();
                 }
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
+                // Handle unselected state if needed
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
+                // Handle reselection if needed
             }
         });
+
+
+
         // Get Started button click listener
         btnGetStarted.setOnClickListener(v -> {
             //open main activity
             Intent mainActivity = new Intent(getApplicationContext(), Login.class);
             startActivity(mainActivity);
-            // also we need to save a boolean value to storage so next time when the user run the app
-            // we could know that he is already checked the intro screen activity
-            // i'm going to use shared preferences to that process
-            //savePrefsData();
             finish();
         });
         // skip button click listener
@@ -112,14 +113,11 @@ public class Onboarding extends AppCompatActivity {
     }
 
 
-    private void loaddLastScreen() {
+    private void loadLastScreen() {
         btnNext.setVisibility(View.INVISIBLE);
         btnGetStarted.setVisibility(View.VISIBLE);
         tvSkip.setVisibility(View.INVISIBLE);
         //tabIndicator.setVisibility(View.INVISIBLE);
-        // TODO : ADD an animation the getstarted button
-        // setup animation
-        //btnGetStarted.setAnimation(btnAnim);
     }
 
     @Override
@@ -129,19 +127,20 @@ public class Onboarding extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
-        boolean is_authorized = getSharedPreferences("Authorized_for_Access", MODE_PRIVATE)
-                .getBoolean("is_Authorized_to_access_the_app", false);
-
-        boolean is_student = getSharedPreferences("our_user?", MODE_PRIVATE)
-                .getBoolean("student", true);
+        boolean is_verified = getSharedPreferences("Verification", MODE_PRIVATE)
+                .getBoolean("isVerified", false);
 
         if (user != null) {
-            if (is_authorized || is_student) {
+            if(is_verified){
                 startActivity(new Intent(Onboarding.this, MainActivity.class));
                 finish();
-            } else {
-
-                startActivity(new Intent(Onboarding.this, FormMandatory.class));
+            }
+        }
+        else{
+            boolean is_first_time = getSharedPreferences("Verification", MODE_PRIVATE)
+                    .getBoolean("isFirstTime", true);
+            if(!is_first_time){
+                startActivity(new Intent(Onboarding.this, Login.class));
                 finish();
             }
         }

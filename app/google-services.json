@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "853407997675",
+    "firebase_url": "https://final-abgec-default-rtdb.firebaseio.com",
     "project_id": "final-abgec",
     "storage_bucket": "final-abgec.appspot.com"
   },
@@ -12,7 +13,28 @@
           "package_name": "com.nikhil.finalabgec"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "853407997675-6me2m30o8digqgchcjhnbjcakhrd8914.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nikhil.finalabgec",
+            "certificate_hash": "06ef50b7d874bcaa5f23045375c346932a9fb4df"
+          }
+        },
+        {
+          "client_id": "853407997675-pnaq5nl9g5h10iccio62mdhjsaqb28no.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nikhil.finalabgec",
+            "certificate_hash": "47029b032ceecee323101c5ed2faed80c6c8f71b"
+          }
+        },
+        {
+          "client_id": "853407997675-n6l8gkjojncp1rbb1kf43fm01s5p0m25.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDHuNRuVoprUS1K7tcwqTfOhPCi_7-75f8"
@@ -20,7 +42,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "853407997675-n6l8gkjojncp1rbb1kf43fm01s5p0m25.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

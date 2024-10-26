@@ -22,8 +22,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.nikhil.finalabgec.Model.JobModel;
 import com.nikhil.finalabgec.R;
 
@@ -44,18 +47,33 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
     Dialog dialog;
     TextView yes, no;
     Boolean click=true;
-    List<String> x;
-    DatabaseReference reference;
+    DatabaseReference reference, adminReference;
     int previousExpandedPosition = -1;
     int mExpandedPosition=-1;
     String value;
+    boolean isAdmin = false;
 
 
-    public JobAdapter(ArrayList<JobModel> list, Context context, String value) {
+    public JobAdapter(ArrayList<JobModel> list, Context context) {
         this.list = list;
         this.context1 = context;
-        this.value = value;
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        reference = FirebaseDatabase.getInstance().getReference().child("jobs");
+        adminReference = FirebaseDatabase.getInstance().getReference().child("admins").child(user.getUid());
+        adminReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists() && snapshot.getValue(Boolean.class) != null && Boolean.TRUE.equals(snapshot.getValue(Boolean.class))){
+                    setIsAdmin();
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     @NonNull
@@ -68,15 +86,6 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-
-        x = new ArrayList<>();
-        x.add("b");
-        x.add("c");
-        System.out.println(x.add("a"));
-        auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
-        reference = FirebaseDatabase.getInstance().getReference().child("jobs");
-
         if (position < list.size()) {
             if (list.get(position).getImageLink()!=null) {
                 try {
@@ -87,22 +96,38 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
                 }
             }
 
-            int amount = Integer.parseInt(list.get(position).getSalary());
-
             holder.company.setText(list.get(position).getCompany());
             holder.jobTitle.setText(list.get(position).getJobTitle());
             holder.jobLocation.setText(list.get(position).getJoblocation());
             holder.jobType.setText(list.get(position).getJobType());
             holder.job_function.setText(list.get(position).getJobFunction());
             holder.job_mode.setText(list.get(position).getJobMode());
-
-            holder.salary.setText("₹ " + new DecimalFormat("##,##,##0").format(amount) + "/M.");
             holder.level.setText(list.get(position).getExperience());
-            if(value.equals("Admin"))
-                holder.number.setText(list.get(position).getNumber());
+
+//            if(list.get(position).getNumber() == null){
+//                holder.number.setText("NA");
+//            }
+//            else{
+//                holder.number.setText(list.get(position).getNumber());
+//            }
+
+            if(list.get(position).getSalary() == null){
+                holder.salary.setText("NA");
+            } else{
+                try{
+                    int amount = Integer.parseInt(list.get(position).getSalary());
+                    DecimalFormat formatter = new DecimalFormat("#,###,##0");
+                    String myNumber = formatter.format(amount);
+                    holder.salary.setText("₹ " + myNumber + "/M.");
+                }
+                catch( Exception e){
+                    holder.salary.setText("NA");
+                }
+            }
+
         }
 
-        if (list.get(position).getUid().equals(user.getUid())){
+        if (list.get(position).getUid().equals(user.getUid()) || isAdmin){
             holder.delete.setVisibility(View.VISIBLE);
 
             holder.delete.setOnClickListener(v->{
@@ -128,52 +153,20 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
         }
 
 
+        // TODO: Check this part
         final boolean isExpanded = position==mExpandedPosition;
         holder.layout1.setVisibility(isExpanded?View.VISIBLE:View.GONE);
         holder.itemView.setActivated(isExpanded);
-
         if (isExpanded)
-            previousExpandedPosition = position;
-
+            previousExpandedPosition = holder.getAdapterPosition();
         holder.layout.setOnClickListener(v -> {
             mExpandedPosition = isExpanded ? -1:position;
             notifyItemChanged(previousExpandedPosition);
             notifyItemChanged(position);
-            if (value.equals("Admin")){
-                holder.number.setVisibility(View.VISIBLE);
-            }
         });
-
-       /* holder.layout.setOnClickListener(v->{
-            if (click) {
-                holder.job_function.setVisibility(View.VISIBLE);
-                holder.job_mode.setVisibility(View.VISIBLE);
-                holder.salary.setVisibility(View.VISIBLE);
-                holder.level.setVisibility(View.VISIBLE);
-                if (value.equals("Admin")){
-                    holder.number.setVisibility(View.VISIBLE);
-                }
-                click = false;
-            }
-            else {
-                holder.job_function.setVisibility(View.GONE);
-                holder.job_mode.setVisibility(View.GONE);
-                holder.salary.setVisibility(View.GONE);
-                holder.level.setVisibility(View.GONE);
-                holder.number.setVisibility(View.GONE);
-                click = true;
-            }
-        });
-*/
-
 
         holder.apply.setOnClickListener(v->{
 
-           /* String url = list.get(position).getUrl();
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(url));
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            context1.startActivity(i);*/
             String url = list.get(position).getUrl().trim().toString();
             String regex = "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$";
             //Matching the given phone number with regular expression
@@ -219,6 +212,11 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
             intent.putExtra(Intent.EXTRA_TEXT, message);
             context1.startActivity(Intent.createChooser(intent, "Share using"));
         });
+
+    }
+
+    private void setIsAdmin() {
+        isAdmin = true;
     }
 
     @Override
@@ -231,7 +229,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
         TextView company,jobType,jobTitle,jobLocation,apply,job_function,job_mode,salary,level,number;
         SimpleDraweeView image;
         ImageView delete,share;
-        LinearLayout layout,layout1;
+        LinearLayout layout, layout1;
 
 
         public ViewHolder(@NonNull View itemView) {

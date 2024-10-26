@@ -23,10 +23,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import com.facebook.imagepipeline.core.ImageTranscoderType;
-import com.facebook.imagepipeline.core.MemoryChunkType;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -61,7 +57,7 @@ public class Post extends Fragment {
     TextView loadText;
 
     SwipeRefreshLayout mSwipeRefreshLayout;
-    PostAdapter userAdapter;
+    PostAdapter postAdapter;
     FirebaseUser user;
     FirebaseAuth auth;
 
@@ -96,14 +92,6 @@ public class Post extends Fragment {
         smoothBottomBar= requireActivity().findViewById(R.id.bottomBar);
         smoothBottomBar.setItemActiveIndex(0);
 
-        Fresco.initialize(
-                getContextNullSafety(),
-                ImagePipelineConfig.newBuilder(getContextNullSafety())
-                        .setMemoryChunkType(MemoryChunkType.BUFFER_MEMORY)
-                        .setImageTranscoderType(ImageTranscoderType.JAVA_TRANSCODER)
-                        .experiment().setNativeCodeDisabled(true)
-                        .build());
-
         getPost();
         FirebaseMessaging.getInstance().subscribeToTopic("/topics/myTopic3")
                 .addOnCompleteListener(task -> {
@@ -115,21 +103,22 @@ public class Post extends Fragment {
                 });
 
         mSwipeRefreshLayout.setOnRefreshListener(this::getPost);
-        OnBackPressedCallback callback=new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                if(((FragmentActivity) getContextNullSafety()).getSupportFragmentManager().findFragmentById(R.id.drawer) != null) {
-                    ((FragmentActivity) getContextNullSafety()).getSupportFragmentManager()
-                            .beginTransaction().
-                            remove(Objects.requireNonNull(((FragmentActivity) getContextNullSafety()).getSupportFragmentManager().findFragmentById(R.id.drawer))).commit();
-                }
-                ((FragmentActivity) getContextNullSafety()).getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.container,new Post())
-                        .commit();
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(),callback);
+
+//        OnBackPressedCallback callback=new OnBackPressedCallback(true) {
+//            @Override
+//            public void handleOnBackPressed() {
+//                if(((FragmentActivity) getContextNullSafety()).getSupportFragmentManager().findFragmentById(R.id.drawer) != null) {
+//                    ((FragmentActivity) getContextNullSafety()).getSupportFragmentManager()
+//                            .beginTransaction().
+//                            remove(Objects.requireNonNull(((FragmentActivity) getContextNullSafety()).getSupportFragmentManager().findFragmentById(R.id.drawer))).commit();
+//                }
+////                ((FragmentActivity) getContextNullSafety()).getSupportFragmentManager()
+////                        .beginTransaction()
+////                        .replace(R.id.container,new Post())
+////                        .commit();
+//            }
+//        };
+//        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(),callback);
 
         search.addTextChangedListener(new TextWatcher() {
 
@@ -148,7 +137,6 @@ public class Post extends Fragment {
 
         mSwipeRefreshLayout.setRefreshing(true);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
@@ -162,9 +150,9 @@ public class Post extends Fragment {
                     mSwipeRefreshLayout.setRefreshing(false);
                     loadimage.setVisibility(View.GONE);
                     loadText.setVisibility(View.GONE);
-                    userAdapter = new PostAdapter(list, contextNullSafe);
-                    userAdapter.notifyDataSetChanged();
-                    recyclerView.setAdapter(userAdapter);
+                    postAdapter = new PostAdapter(list, contextNullSafe);
+                    postAdapter.notifyDataSetChanged();
+                    recyclerView.setAdapter(postAdapter);
                 }
                 else {
                     mSwipeRefreshLayout.setRefreshing(false);
@@ -179,7 +167,9 @@ public class Post extends Fragment {
 
             }
         });
+
     }
+
     @SuppressLint("NotifyDataSetChanged")
     private void search (String s) {
         mylist.clear();
@@ -194,11 +184,12 @@ public class Post extends Fragment {
                 e.printStackTrace();
             }
         }
-        PostAdapter userAdapter = new PostAdapter(mylist,getContextNullSafety());
-        userAdapter.notifyDataSetChanged();
+        PostAdapter postAdapter = new PostAdapter(mylist,getContextNullSafety());
+        postAdapter.notifyDataSetChanged();
         if (recyclerView != null)
-            recyclerView.setAdapter(userAdapter);
+            recyclerView.setAdapter(postAdapter);
     }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -215,7 +206,6 @@ public class Post extends Fragment {
         if (requireActivity() != null) return requireActivity();
         if (requireView() != null && requireView().getContext() != null)
             return requireView().getContext();
-
         return null;
 
     }

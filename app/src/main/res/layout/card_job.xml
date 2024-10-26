@@ -273,26 +273,27 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/salary" />
 
-            <TextView
-                android:id="@+id/number"
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:drawablePadding="15dp"
+<!--            <TextView-->
+<!--                android:id="@+id/number"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_weight="1"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:drawablePadding="15dp"-->
 
-                android:fontFamily="@font/poppins"
-                android:gravity="center"
-                android:paddingStart="15dp"
-                android:paddingEnd="8dp"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                android:visibility="visible"
-                app:drawableTint="#2d796d"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/job_function" />
+<!--                android:fontFamily="@font/poppins"-->
+<!--                android:gravity="center"-->
+<!--                android:paddingStart="15dp"-->
+<!--                android:paddingEnd="8dp"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:textSize="18sp"-->
+<!--                android:visibility="visible"-->
+<!--                app:drawableTint="#2d796d"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintHorizontal_bias="0.0"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/job_function" />-->
         </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

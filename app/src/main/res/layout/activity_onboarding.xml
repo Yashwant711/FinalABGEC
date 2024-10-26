@@ -6,8 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context=".Onboarding">
-    >
-
 
     <LinearLayout
         android:id="@+id/next"
@@ -24,7 +22,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent">
-
 
         <TextView
             android:id="@+id/textView23"
@@ -47,6 +44,7 @@
             android:contentDescription="@string/image"
             app:srcCompat="@drawable/ic_forward"
             app:tint="@color/white" />
+
     </LinearLayout>
 
 

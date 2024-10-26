@@ -55,14 +55,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.card_post,parent,false);
+        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.card_post, parent,false);
         return new ViewHolder(view);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
@@ -70,6 +69,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         reference2 = FirebaseDatabase.getInstance().getReference().child("users");
 
         if (list.size()!=0) {
+
             reference.child(list.get(position).getPushkey()).child("likes").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -115,6 +115,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             if (!list.get(position).getDescription().equals("")) {
                 holder.description.setText(list.get(position).getDescription());
             }
+
+            holder.share.setVisibility(View.GONE);
 
             holder.heart_no.setOnClickListener(v->{
                 if (click==0){
@@ -199,6 +201,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 }
             });
         }
+
     }
 
     @Override
@@ -211,7 +214,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         TextView name,link,title,description,branch,like;
         SimpleDraweeView image , profile_img;
         LinearLayout layout;
-        ImageView heart_no;
+        ImageView heart_no, share;
         LottieAnimationView like_btn;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -225,6 +228,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             like_btn = itemView.findViewById(R.id.like_btn);
             heart_no = itemView.findViewById(R.id.heart);
             profile_img = itemView.findViewById(R.id.profile_img);
+            share = itemView.findViewById(R.id.share);
         }
     }
 

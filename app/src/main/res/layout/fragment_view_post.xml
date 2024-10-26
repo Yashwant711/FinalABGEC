@@ -51,41 +51,41 @@
                 app:roundedCornerRadius="20dp"
                 fresco:placeholderImage="@drawable/my_drawable" />
 
-            <LinearLayout
-                android:id="@+id/like_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingStart="20dp"
-                android:paddingTop="10dp"
-                android:visibility="gone"
-                android:paddingEnd="20dp"
-                android:paddingBottom="10dp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageNote"
-                app:layout_constraintEnd_toEndOf="parent">
+<!--            <LinearLayout-->
+<!--                android:id="@+id/like_layout"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:gravity="center"-->
+<!--                android:orientation="horizontal"-->
+<!--                android:paddingStart="20dp"-->
+<!--                android:paddingTop="10dp"-->
+<!--                android:visibility="visible"-->
+<!--                android:paddingEnd="20dp"-->
+<!--                android:paddingBottom="10dp"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/imageNote"-->
+<!--                app:layout_constraintEnd_toEndOf="parent">-->
 
-                <ImageView
-                    android:id="@+id/heart"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:contentDescription="@string/app_name"
-                    android:src="@drawable/ic_heart_liked"
-                    app:layout_constraintEnd_toEndOf="@+id/title"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageNote" />
+<!--                <ImageView-->
+<!--                    android:id="@+id/heart"-->
+<!--                    android:layout_width="25dp"-->
+<!--                    android:layout_height="25dp"-->
+<!--                    android:contentDescription="@string/app_name"-->
+<!--                    android:src="@drawable/ic_heart_liked"-->
+<!--                    app:layout_constraintEnd_toEndOf="@+id/title"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/imageNote" />-->
 
-                <TextView
-                    android:id="@+id/like_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/poppins"
-                    android:maxLines="1"
-                    android:textColor="@color/blue"
-                    android:textSize="16sp" />
-            </LinearLayout>
+<!--                <TextView-->
+<!--                    android:id="@+id/like_count"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="3dp"-->
+<!--                    android:ellipsize="end"-->
+<!--                    android:fontFamily="@font/poppins"-->
+<!--                    android:maxLines="1"-->
+<!--                    android:textColor="@color/blue"-->
+<!--                    android:textSize="16sp" />-->
+<!--            </LinearLayout>-->
 
 
             <TextView

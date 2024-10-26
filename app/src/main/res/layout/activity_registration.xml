@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:clickable="true"
+    android:paddingTop="20dp"
+    android:focusable="true"
+    android:id="@+id/lay"
+    >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="25dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/textView10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:fontFamily="@font/poppins"
+                android:text="Registration"
+                android:textColor="@color/main_blue"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/textView11"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/poppins"
+                android:text="Name*"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_edt_text"
+                android:padding="15dp"
+                android:textSize="16sp"
+                android:ems="10"
+                android:gravity="start|top"
+                android:fontFamily="@font/poppins"
+                android:hint="Enter your name"
+                android:inputType="textNoSuggestions"
+                tools:ignore="SpeakableTextPresentCheck">
+            </EditText>
+
+            <TextView
+                android:id="@+id/pr_roll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15sp"
+                android:fontFamily="@font/poppins"
+                android:text="Branch*"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/branch_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_edt_text"
+                android:spinnerMode="dropdown"
+                android:dropDownWidth="match_parent"
+                android:fontFamily="@font/poppins"
+                android:gravity="start"/>
+
+            <TextView
+                android:id="@+id/crime_no_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15sp"
+                android:fontFamily="@font/poppins"
+                android:text="Batch*"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/batch_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_edt_text"
+                android:spinnerMode="dropdown"
+                android:dropDownWidth="match_parent"
+                android:fontFamily="@font/poppins"
+                android:gravity="start"/>
+
+            <TextView
+                android:id="@+id/email_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/poppins"
+                android:text="Email ID*"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/email_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_edt_text"
+                android:padding="15dp"
+                android:textSize="16sp"
+                android:ems="10"
+                android:gravity="start|top"
+                android:fontFamily="@font/poppins"
+                android:hint="Enter your email-id"
+                android:inputType="textEmailAddress"
+                tools:ignore="SpeakableTextPresentCheck"/>
+
+
+            <TextView
+                android:id="@+id/create_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/poppins"
+                android:text="Create Password*"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/et_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_edt_text"
+                android:padding="15dp"
+                android:textSize="16sp"
+                android:ems="10"
+                android:gravity="start|top"
+                android:fontFamily="@font/poppins"
+                android:hint="Password"
+                android:inputType="textPassword"
+                tools:ignore="SpeakableTextPresentCheck"/>
+
+            <TextView
+                android:id="@+id/confirm_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/poppins"
+                android:text="Confirm Password*"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/et_confirmPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_edt_text"
+                android:padding="15dp"
+                android:textSize="16sp"
+                android:ems="10"
+                android:gravity="start|top"
+                android:fontFamily="@font/poppins"
+                android:hint="Password"
+                android:inputType="textPassword"
+                tools:ignore="SpeakableTextPresentCheck"/>
+
+            <TextView
+                android:id="@+id/submit_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/bg_card"
+                android:backgroundTint="@color/main_yellow"
+                android:fontFamily="@font/poppins"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:layout_marginBottom="30dp"
+                android:text="@string/submit"
+                android:layout_marginTop="30dp"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                tools:ignore="TextContrastCheck"
+                />
+
+
+<!--            <AutoCompleteTextView-->
+<!--                android:id="@+id/passout_yr"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="10dp"-->
+<!--                android:importantForAutofill="no"-->
+<!--                android:background="@drawable/bg_edt_text"-->
+<!--                android:ems="10"-->
+<!--                android:gravity="start|top"-->
+<!--                android:fontFamily="@font/poppins"-->
+<!--                android:hint="2014"-->
+<!--                android:maxLength="4"-->
+<!--                android:inputType="number"-->
+<!--                android:padding="15dp"-->
+<!--                android:textSize="16sp"-->
+<!--                tools:ignore="SpeakableTextPresentCheck" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/year_crime"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="15sp"-->
+<!--                android:fontFamily="@font/poppins"-->
+<!--                android:text="Country"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:textSize="16sp" />-->
+
+<!--            <EditText-->
+<!--                android:id="@+id/country"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="10dp"-->
+<!--                android:importantForAutofill="no"-->
+<!--                android:background="@drawable/bg_edt_text"-->
+<!--                android:ems="10"-->
+<!--                android:gravity="start|top"-->
+<!--                android:hint="India"-->
+<!--                android:fontFamily="@font/poppins"-->
+<!--                android:inputType="textPostalAddress"-->
+<!--                android:padding="15dp"-->
+<!--                android:textSize="16sp"-->
+<!--                tools:ignore="SpeakableTextPresentCheck" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/case_type_txt"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="15sp"-->
+<!--                android:fontFamily="@font/poppins"-->
+<!--                android:text="@string/state"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:textSize="16sp" />-->
+
+
+<!--            <EditText-->
+<!--                android:id="@+id/state"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="10dp"-->
+<!--                android:importantForAutofill="no"-->
+<!--                android:background="@drawable/bg_edt_text"-->
+<!--                android:ems="10"-->
+<!--                android:gravity="start|top"-->
+<!--                android:hint="@string/chhattisgarh"-->
+<!--                android:fontFamily="@font/poppins"-->
+<!--                android:inputType="textNoSuggestions"-->
+<!--                android:padding="15dp"-->
+<!--                android:textSize="16sp"-->
+<!--                tools:ignore="SpeakableTextPresentCheck">-->
+
+<!--            </EditText>-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/case_no_txt"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="15sp"-->
+<!--                android:fontFamily="@font/poppins"-->
+<!--                android:text="@string/city"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:textSize="16sp" />-->
+
+<!--            <EditText-->
+<!--                android:id="@+id/city"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="10dp"-->
+<!--                android:importantForAutofill="no"-->
+<!--                android:background="@drawable/bg_edt_text"-->
+<!--                android:ems="10"-->
+<!--                android:singleLine="true"-->
+<!--                android:gravity="start|top"-->
+<!--                android:hint="@string/bilaspur"-->
+<!--                android:fontFamily="@font/poppins"-->
+<!--                android:inputType="textNoSuggestions"-->
+<!--                android:padding="15dp"-->
+<!--                android:textSize="16sp"-->
+<!--                tools:ignore="SpeakableTextPresentCheck" />-->
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

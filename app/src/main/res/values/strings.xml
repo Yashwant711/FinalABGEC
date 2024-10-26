@@ -1,4 +1,14 @@
 <resources>
+    <string-array name="branch_options">
+        <item>Select your branch</item>
+        <item>Computer Science</item>
+        <item>Information Technology</item>
+        <item>Mechanical Engineering</item>
+        <item>Mining Engineering</item>
+        <item>Civil Engineering</item>
+        <item>Electrical Engineering</item>
+        <item>Electronics &amp; Telecommunication Engineering</item>
+    </string-array>
     <string name="app_name">ABGEC</string>
     <string name="skip">Skip</string>
     <string name="image">image</string>

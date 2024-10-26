@@ -59,23 +59,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/view">
 
-       <!-- <include
-            android:id="@+id/choice"
-            layout="@layout/layout_choose"
-            />-->
-
         <include
             android:id="@+id/yb"
-            layout="@layout/login1"
+            layout="@layout/login"
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="0dp" />
 
-        <include android:id="@+id/otp"
-            android:visibility="gone"
-            layout="@layout/otp_verify"/>
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <include
+        layout="@layout/overlay" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -22,12 +23,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.nikhil.finalabgec.R;
@@ -42,9 +47,7 @@ public class ViewPost extends Fragment {
     Context contextNullSafe;
     ImageView back,share;
     TextView delete,link,des,nam,date,tit,lik;
-
-    boolean isadmin=false;
-    DatabaseReference reference;
+    DatabaseReference reference, adminReference, userReference;
     FirebaseAuth auth;
     FirebaseUser user;
     SimpleDraweeView imageNote;
@@ -63,13 +66,14 @@ public class ViewPost extends Fragment {
         tit = view.findViewById(R.id.title);
         nam = view.findViewById(R.id.name);
         date = view.findViewById(R.id.date);
-        lik = view.findViewById(R.id.like_count);
+//        lik = view.findViewById(R.id.like_count);
         imageNote = view.findViewById(R.id.imageNote);
-        like_layout = view.findViewById(R.id.like_layout);
+//        like_layout = view.findViewById(R.id.like_layout);
         auth=FirebaseAuth.getInstance();
         user=auth.getCurrentUser();
         share = view.findViewById(R.id.share);
         reference = FirebaseDatabase.getInstance().getReference().child("posts");
+        adminReference = FirebaseDatabase.getInstance().getReference().child("admins").child(user.getUid());
 
 
         if (contextNullSafe == null) getContextNullSafety();
@@ -83,7 +87,7 @@ public class ViewPost extends Fragment {
             pushkey = getArguments().getString("pushkey");
             title = getArguments().getString("title");
             description = getArguments().getString("description");
-            likes = getArguments().getString("like");
+//            likes = getArguments().getString("like");
             dat = getArguments().getString("date");
         } catch (Exception e) {
             e.printStackTrace();
@@ -108,24 +112,24 @@ public class ViewPost extends Fragment {
         if (!dat.equals(""))
             date.setText(dat);
 
-        if (!likes.equals("0")) {
-            like_layout.setVisibility(View.VISIBLE);
-            lik.setText(likes);
-        }
+//        if (!likes.equals("0")) {
+//            like_layout.setVisibility(View.VISIBLE);
+//            lik.setText(likes);
+//        }
 
 
 
-
-        //  Log.e("value_uid",uid_of_user);
-        if (uid.equals(user.getUid()) || check_for_admin()){
-            delete.setVisibility(View.VISIBLE);
-
-            delete.setOnClickListener(v->{
-                deletePost();
-            });
-        }
-        else
-            delete.setVisibility(View.GONE);
+        check_for_admin(isAdmin -> {
+            if (uid.equals(user.getUid()) || isAdmin){
+                delete.setVisibility(View.VISIBLE);
+                delete.setOnClickListener(v->{
+                    deletePost();
+                });
+            }
+            else{
+                delete.setVisibility(View.GONE);
+            }
+        });
 
         back.setOnClickListener(v->{
             back();
@@ -143,15 +147,16 @@ public class ViewPost extends Fragment {
                     .commit();
         });
 
-        share.setOnClickListener(v->{
-            String str_title ="*"+title+"*"+"\n\n"+"Created by : "+name+
-                    "\n"+"Date : "+date+
-                    "\n"+"\n\n"+"*View* :"+"https://abgec.android/nikhil/"+uid+"/"+pushkey ; //Text to be shared
-            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-            sharingIntent.setType("text/plain");
-            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, str_title+"\n\n"+"This is a playstore link to download.. " + "https://play.google.com/store/apps/details?id=" + getContextNullSafety().getPackageName());
-            startActivity(Intent.createChooser(sharingIntent, "Share using"));
-        });
+        share.setVisibility(View.GONE);
+
+//        share.setOnClickListener(v->{
+//            String str_title ="*"+title+"*"+"\n\n"+"Created by : "+name+
+//                    "\n"+"Date : "+date+ "\n";
+//            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+//            sharingIntent.setType("text/plain");
+//            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, str_title+"\n\n"+"This is a playstore link to download.. " + "https://play.google.com/store/apps/details?id=" + getContextNullSafety().getPackageName());
+//            startActivity(Intent.createChooser(sharingIntent, "Share using"));
+//        });
 
 
         OnBackPressedCallback callback=new OnBackPressedCallback(true) {
@@ -167,13 +172,29 @@ public class ViewPost extends Fragment {
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(),callback);
 
+        // TODO: Implement this if recommended
+//        nam.setOnClickListener( v -> {
+//            Profile profile = new Profile();
+//            Bundle args = new Bundle();
+//            args.putString("sending_user_from_sync","addstack");
+//            args.putString("uid_sending_profile", uid);
+//            profile.setArguments(args);
+//            ((FragmentActivity) v.getContext()).getSupportFragmentManager()
+//                    .beginTransaction()
+//                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+//                    .add(R.id.container, profile)
+//                    .addToBackStack(null)
+//                    .commit();
+//        });
 
         return view;
     }
 
     private void back() {
-        assert getFragmentManager() != null;
-        getFragmentManager().beginTransaction().remove(ViewPost.this).commit();
+//        assert getFragmentManager() != null;
+//        getFragmentManager().beginTransaction().remove(ViewPost.this).commit();
+        assert getActivity() != null;
+        getActivity().getSupportFragmentManager().beginTransaction().remove(ViewPost.this).commit();
     }
 
     private void deletePost(){
@@ -201,16 +222,24 @@ public class ViewPost extends Fragment {
                         FirebaseStorage.getInstance().getReference().child(imagepath);
                 storageReference.delete();
             }
-
             reference.child(pushkey).removeValue();
             dialog.dismiss();
             back();
         });
     }
 
-    private boolean check_for_admin(){
-        SharedPreferences pref = getContextNullSafety().getSharedPreferences("our_user?", MODE_PRIVATE);
-        return pref.getBoolean("admin", true);
+    private void check_for_admin(OnAdminCheckListener listener){
+        adminReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listener.onAdminCheck(snapshot.exists() && snapshot.getValue(Boolean.class) != null && Boolean.TRUE.equals(snapshot.getValue(Boolean.class)));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                listener.onAdminCheck(false);
+            }
+        });
     }
 
     public Context getContextNullSafety() {
@@ -225,6 +254,10 @@ public class ViewPost extends Fragment {
 
         return null;
 
+    }
+
+    interface OnAdminCheckListener {
+        void onAdminCheck(boolean isAdmin);
     }
 
 }

@@ -10,20 +10,22 @@
         <item android:id="@+id/list" android:icon="@drawable/ic_rate"
             android:title="List Of Alumnis" />
 
-        <item android:id="@+id/privacy" android:icon="@drawable/ic_policy"
-            android:title="Privacy Policy"  />
-        <item android:id="@+id/nav_aboutUs" android:icon="@drawable/logo"
-            android:title="About Us" />
-
-        <item android:id="@+id/nav_terms" android:icon="@drawable/ic_terms"
-            android:title="Terms &amp; Condition" />
+<!--        <item android:id="@+id/privacy" android:icon="@drawable/ic_policy"-->
+<!--            android:title="Privacy Policy"  />-->
 
 
-        <item android:id="@+id/nav_help" android:icon="@drawable/ic_help"
-            android:title="Help &amp; Support" />
+<!--        <item android:id="@+id/nav_aboutUs" android:icon="@drawable/logo"-->
+<!--            android:title="About Us" />-->
 
-        <item android:id="@+id/nav_rate" android:icon="@drawable/ic_rate"
-            android:title="Rate Us" />
+<!--        <item android:id="@+id/nav_terms" android:icon="@drawable/ic_terms"-->
+<!--            android:title="Terms &amp; Condition" />-->
+
+
+<!--        <item android:id="@+id/nav_help" android:icon="@drawable/ic_help"-->
+<!--            android:title="Help &amp; Support" />-->
+
+<!--        <item android:id="@+id/nav_rate" android:icon="@drawable/ic_rate"-->
+<!--            android:title="Rate Us" />-->
 
         <item android:id="@+id/nav_logout" android:icon="@drawable/ic_logout"
             android:title="Logout" />

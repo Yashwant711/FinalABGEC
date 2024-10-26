@@ -102,6 +102,7 @@ public class PostedJobs extends Fragment {
             value = "noAdmin";
             get_data(value);
         }
+
         get_data1();
         search.addTextChangedListener(new TextWatcher() {
 
@@ -131,8 +132,8 @@ public class PostedJobs extends Fragment {
 
 
     private void back(){
-        assert getFragmentManager() != null;
-        getFragmentManager().beginTransaction().remove(PostedJobs.this).commit();
+        assert getActivity() != null;
+        getActivity().getSupportFragmentManager().beginTransaction().remove(PostedJobs.this).commit();
     }
     private void get_data1() {
 
@@ -152,7 +153,7 @@ public class PostedJobs extends Fragment {
                     }
 
                     Collections.reverse(list);
-                    jobAdapter = new JobAdapter(list, getContextNullSafety(),value);
+                    jobAdapter = new JobAdapter(list, getContextNullSafety());
                     jobAdapter.notifyDataSetChanged();
                     if (recyclerView != null)
                         recyclerView.setAdapter(jobAdapter);
@@ -192,16 +193,14 @@ public class PostedJobs extends Fragment {
                     }
 
                     Collections.reverse(list);
-                    jobAdapter = new JobAdapter(list, getContextNullSafety(),value);
+                    jobAdapter = new JobAdapter(list, getContextNullSafety());
                     jobAdapter.notifyDataSetChanged();
                     if (recyclerView != null)
                         recyclerView.setAdapter(jobAdapter);
                 } else {
                     load.setVisibility(View.VISIBLE);
                     loadText.setVisibility(View.VISIBLE);
-                    //mSwipeRefreshLayout.setRefreshing(false);
-
-
+                    mSwipeRefreshLayout.setRefreshing(false);
                 }
             }
 
@@ -235,7 +234,7 @@ public class PostedJobs extends Fragment {
                 e.printStackTrace();
             }
         }
-        JobAdapter userAdapter = new JobAdapter(mylist,getContextNullSafety(),value);
+        JobAdapter userAdapter = new JobAdapter(mylist,getContextNullSafety());
         userAdapter.notifyDataSetChanged();
         if (recyclerView != null)
             recyclerView.setAdapter(userAdapter);
@@ -254,6 +253,7 @@ public class PostedJobs extends Fragment {
         return null;
 
     }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);

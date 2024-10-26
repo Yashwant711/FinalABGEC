@@ -22,10 +22,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import com.facebook.imagepipeline.core.ImageTranscoderType;
-import com.facebook.imagepipeline.core.MemoryChunkType;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,8 +29,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.nikhil.finalabgec.Adapter.user_adapter;
-import com.nikhil.finalabgec.Model.user_dataModel;
+import com.nikhil.finalabgec.Adapter.UserAdapter;
+import com.nikhil.finalabgec.Model.UserDataModel;
 import com.nikhil.finalabgec.R;
 
 import java.util.ArrayList;
@@ -50,15 +46,17 @@ public class AlumniList extends Fragment {
     DatabaseReference reference;
     RecyclerView recyclerView;
     EditText search;
-    ArrayList<user_dataModel> list;
-    ArrayList<user_dataModel> mylist;
+    ArrayList<UserDataModel> list;
+    ArrayList<UserDataModel> mylist;
     LottieAnimationView loadimage;
     TextView loadText;
     SmoothBottomBar smoothBottomBar;
     SwipeRefreshLayout mSwipeRefreshLayout;
-    user_adapter userAdapter;
+    UserAdapter userAdapter;
     FirebaseUser user;
     FirebaseAuth auth;
+    DatabaseReference cutoffReference;
+    String cutoff;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,8 +64,22 @@ public class AlumniList extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_alumni_list, container, false);
 
+        cutoffReference = FirebaseDatabase.getInstance().getReference("BatchCutoff");
+        cutoffReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                cutoff = snapshot.getValue(String.class);
+                cutoff = cutoff != null? cutoff : "0";
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         if (contextNullSafe == null) getContextNullSafety();
-//Hide the keyboard
+        //  Hide the keyboard
         requireActivity().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
@@ -89,17 +101,6 @@ public class AlumniList extends Fragment {
         search=view.findViewById(R.id.input);
         smoothBottomBar=requireActivity().findViewById(R.id.bottomBar);
         smoothBottomBar.setItemActiveIndex(2);
-
-        Fresco.initialize(
-                getContextNullSafety(),
-                ImagePipelineConfig.newBuilder(getContextNullSafety())
-                        .setMemoryChunkType(MemoryChunkType.BUFFER_MEMORY)
-                        .setImageTranscoderType(ImageTranscoderType.JAVA_TRANSCODER)
-                        .experiment().setNativeCodeDisabled(true)
-                        .build());
-
-
-
 
         getAlumnis();
 
@@ -138,21 +139,25 @@ public class AlumniList extends Fragment {
         mylist.clear();
         list.clear();
         mSwipeRefreshLayout.setRefreshing(true);
+        recyclerView.setVisibility(View.GONE);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    if (!Objects.equals(snapshot.child(Objects.requireNonNull(ds.getKey())).child("name").getValue(String.class), "")) {
-                        if (Objects.equals(snapshot.child(Objects.requireNonNull(ds.getKey())).child("id").getValue(String.class), "Alumni")) {
-                            list.add(snapshot.child(Objects.requireNonNull(ds.getKey())).getValue(user_dataModel.class));
-                        }
+                    String uid = ds.child("uid").getValue(String.class);
+                    String batch = ds.child("batch").getValue(String.class);
+                    if (uid != null && !uid.isEmpty() && batch != null && !batch.isEmpty()){
+                        int y1 = Integer.parseInt(batch);
+                        int y2 = Integer.parseInt(cutoff);
+                        if(y1 <= y2)
+                            list.add(snapshot.child(Objects.requireNonNull(ds.getKey())).getValue(UserDataModel.class));
                     }
                 }
                 mSwipeRefreshLayout.setRefreshing(false);
+                recyclerView.setVisibility(View.VISIBLE);
                 loadimage.setVisibility(View.GONE);
                 loadText.setVisibility(View.GONE);
-                userAdapter = new user_adapter(contextNullSafe, list);
+                userAdapter = new UserAdapter(contextNullSafe, list);
                 userAdapter.notifyDataSetChanged();
                 if (recyclerView != null)
                     recyclerView.setAdapter(userAdapter);
@@ -168,29 +173,31 @@ public class AlumniList extends Fragment {
     @SuppressLint("NotifyDataSetChanged")
     private void search (String s) {
         mylist.clear();
-        for (user_dataModel object : list) {
+        for (UserDataModel object : list) {
             try {
                 if (object.getName().toLowerCase().contains(s.toLowerCase().trim())) {
                     mylist.add(object);
                 } else if (object.getBranch().toLowerCase().contains(s.toLowerCase().trim())) {
                     mylist.add(object);
-                } else if (object.getPassout().toLowerCase().contains(s.toLowerCase().trim())) {
+                } else if (object.getBatch().toLowerCase().contains(s.toLowerCase().trim())) {
                     mylist.add(object);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        user_adapter userAdapter = new user_adapter(getContextNullSafety(), mylist);
+        UserAdapter userAdapter = new UserAdapter(getContextNullSafety(), mylist);
         userAdapter.notifyDataSetChanged();
         if (recyclerView != null)
             recyclerView.setAdapter(userAdapter);
     }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         contextNullSafe = context;
     }
+
     public Context getContextNullSafety() {
         if (getContext() != null) return getContext();
         if (getActivity() != null) return getActivity();
@@ -200,9 +207,7 @@ public class AlumniList extends Fragment {
         if (requireActivity() != null) return requireActivity();
         if (requireView() != null && requireView().getContext() != null)
             return requireView().getContext();
-
         return null;
-
     }
 
 }

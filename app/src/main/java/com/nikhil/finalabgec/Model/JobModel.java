@@ -3,7 +3,7 @@ package com.nikhil.finalabgec.Model;
 public class JobModel {
 
     private String uid;
-    private String number;
+//    private String number;
     private String company;
     private String jobTitle;
     private String imageLink;
@@ -21,9 +21,9 @@ public class JobModel {
     public JobModel() {
     }
 
-    public JobModel(String uid, String number, String company, String jobTitle, String imageLink, String jobId, String joblocation, String jobType, String jobFunction, String jobMode, String salary, String experience, String pushkey, String url) {
+    public JobModel(String uid, String company, String jobTitle, String imageLink, String jobId, String joblocation, String jobType, String jobFunction, String jobMode, String salary, String experience, String pushkey, String url) {
         this.uid = uid;
-        this.number = number;
+//        this.number = number;
         this.company = company;
         this.jobTitle = jobTitle;
         this.imageLink = imageLink;
@@ -46,9 +46,9 @@ public class JobModel {
         return uid;
     }
 
-    public String getNumber() {
-        return number;
-    }
+//    public String getNumber() {
+//        return number;
+//    }
 
     public String getCompany() {
         return company;

@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
-import com.nikhil.finalabgec.Model.intro_ScreenItem;
+import com.nikhil.finalabgec.Model.IntroScreenItem;
 import com.nikhil.finalabgec.R;
 
 import java.util.List;
@@ -18,9 +18,9 @@ import java.util.List;
 public class IntroViewPagerAdapter extends PagerAdapter {
 
     Context mContext ;
-    List<intro_ScreenItem> mListScreen;
+    List<IntroScreenItem> mListScreen;
 
-    public IntroViewPagerAdapter(Context mContext, List<intro_ScreenItem> mListScreen) {
+    public IntroViewPagerAdapter(Context mContext, List<IntroScreenItem> mListScreen) {
         this.mContext = mContext;
         this.mListScreen = mListScreen;
     }
@@ -54,6 +54,7 @@ public class IntroViewPagerAdapter extends PagerAdapter {
     public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view == object;
     }
+
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         container.removeView((View)object);
